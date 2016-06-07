@@ -162,11 +162,15 @@ var createPlayer = function(data){
 };
 
 var updateCameraPosition = function(){
-
+    if (keyState[32]) {
+        // spacebar - Zoom 
+        camera.position.y = player.position.y + 20;
+    }
+    else {
+        camera.position.y = player.position.y + 6;
+    }
     camera.position.x = player.position.x + 6 * Math.sin( player.rotation.y );
-    camera.position.y = player.position.y + 6;
     camera.position.z = player.position.z + 6 * Math.cos( player.rotation.y );
-
 };
 
 var updatePlayerPosition = function(data){
