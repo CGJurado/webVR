@@ -6,12 +6,13 @@ var io = require('socket.io')(http);
 var world = require('./js/server_world');
 
 app.get('/', function(req, res){
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/webvr.html');
 });
 
 // Add code to adjust public/static folders
 //
 app.use(express.static('js'));
+app.use(express.static('public'));
 
 app.get('/js/client_world.js', function(req, res){
     res.sendFile(__dirname + '/js/client_world.js');
