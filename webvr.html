@@ -82,6 +82,12 @@ document.body.appendChild(renderer.domElement);
 // Create a three.js scene.
 var scene = new THREE.Scene();
 
+//keyboard
+var keyState = {};
+
+document.addEventListener('keydown', onKeyDown, false );
+document.addEventListener('keyup', onKeyUp, false );
+
 // Create a three.js camera.
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
 
@@ -145,8 +151,11 @@ function animate(timestamp) {
 
   // Update VR headset position and apply to camera.
   controls.update();
+
+  checkKeyStates();
+
     //set camera to look at the cube
-    camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
+    // camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
   // Render the scene.
   effect.render(scene, camera);
 
@@ -167,6 +176,35 @@ function onVRDisplayPresentChange() {
   onResize();
     
 }
+    //############################### Nuevas Funciones ##################
+    function onKeyDown( event ){
+
+        //event = event || window.event;
+
+        keyState[event.keyCode || event.which] = true;
+
+    }
+
+    function onKeyUp( event ){
+
+        //event = event || window.event;
+
+        keyState[event.keyCode || event.which] = false;
+
+    }
+
+var checkKeyStates = function(){
+
+    if (keyState[38] || keyState[87]) {
+        // up arrow or 'w' - camera  reset
+        //set camera to look at the cube
+        console.log("locotron");
+        camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
+        // controls.update();
+        // vrDisplay.resetPose();
+    }
+
+};
 
 // Kick off animation loop.
 requestAnimationFrame(animate);
