@@ -129,6 +129,7 @@ var cube = new THREE.Mesh(geometry, material);
 
 // Position cube mesh
 cube.position.z = -1;
+    cube.position.x = 1;
 
 // Add cube mesh to your three.js scene
 scene.add(cube);
@@ -144,7 +145,8 @@ function animate(timestamp) {
 
   // Update VR headset position and apply to camera.
   controls.update();
-
+    //set camera to look at the cube
+    camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
   // Render the scene.
   effect.render(scene, camera);
 
@@ -157,11 +159,13 @@ function onResize() {
   effect.setSize(window.innerWidth, window.innerHeight);
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
+    
 }
 
 function onVRDisplayPresentChange() {
   console.log('onVRDisplayPresentChange');
   onResize();
+    
 }
 
 // Kick off animation loop.
