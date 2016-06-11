@@ -87,6 +87,9 @@ var keyState = {};
 
 document.addEventListener('keydown', onKeyDown, false );
 document.addEventListener('keyup', onKeyUp, false );
+    
+//Camera toggle boolean
+var cameraControl = false;
 
 // Create a three.js camera.
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
@@ -142,20 +145,24 @@ scene.add(cube);
 
 // Request animation frame loop function
 var lastRender = 0;
+    //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ANIMATE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 function animate(timestamp) {
   var delta = Math.min(timestamp - lastRender, 500);
   lastRender = timestamp;
 
   // Apply rotation to cube mesh
   cube.rotation.y += delta * 0.0006;
-
-  // Update VR headset position and apply to camera.
-  controls.update();
-
-  checkKeyStates();
-
-    //set camera to look at the cube
-    // camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
+    
+    checkKeyStates();
+    
+    if(cameraControl){
+        //set camera to look at the cube
+        camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
+    }else {
+        // Update VR headset position and apply to camera.
+        controls.update();
+    }
+     
   // Render the scene.
   effect.render(scene, camera);
 
@@ -197,11 +204,16 @@ var checkKeyStates = function(){
 
     if (keyState[38] || keyState[87]) {
         // up arrow or 'w' - camera  reset
-        //set camera to look at the cube
-        console.log("locotron");
-        camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
-        // controls.update();
-        // vrDisplay.resetPose();
+        cameraControl = true;
+        
+//        controls.resetPose();
+//        controls.freeze = true;
+//        controls.enableManualDrag = false;
+    }
+    if (keyState[32] || keyState[75]) {
+        // 'space' - camera  reset
+        cameraControl = false;
+        
     }
 
 };
@@ -222,6 +234,7 @@ document.querySelector('button#vr').addEventListener('click', function() {
 });
 document.querySelector('button#reset').addEventListener('click', function() {
   vrDisplay.resetPose();
+    
 });
 
 function enterFullscreen (el) {
