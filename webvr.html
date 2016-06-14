@@ -82,21 +82,12 @@ document.body.appendChild(renderer.domElement);
 // Create a three.js scene.
 var scene = new THREE.Scene();
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 //keyboard
 var keyState = {};
 
 document.addEventListener('keydown', onKeyDown, false );
 document.addEventListener('keyup', onKeyUp, false );
-    
-//Camera toggle boolean
-var cameraControl = false;
 
-=======
->>>>>>> parent of fd2cee7... La camara mira al cubo cuando se presiona W
-=======
->>>>>>> parent of fd2cee7... La camara mira al cubo cuando se presiona W
 // Create a three.js camera.
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
 
@@ -151,47 +142,20 @@ scene.add(cube);
 
 // Request animation frame loop function
 var lastRender = 0;
-    //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ANIMATE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 function animate(timestamp) {
   var delta = Math.min(timestamp - lastRender, 500);
   lastRender = timestamp;
 
   // Apply rotation to cube mesh
   cube.rotation.y += delta * 0.0006;
-<<<<<<< HEAD
 
   // Update VR headset position and apply to camera.
-<<<<<<< HEAD
-<<<<<<< HEAD
-  // controls.update();
+  controls.update();
 
   checkKeyStates();
 
     //set camera to look at the cube
     // camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
-=======
-    
-    checkKeyStates();
-    
-    if(cameraControl){
-        //set camera to look at the cube
-        camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
-    }else {
-        // Update VR headset position and apply to camera.
-        controls.update();
-    }
-     
->>>>>>> origin/master
-=======
-  controls.update();
-    //set camera to look at the cube
-    camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
->>>>>>> parent of fd2cee7... La camara mira al cubo cuando se presiona W
-=======
-  controls.update();
-    //set camera to look at the cube
-    camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
->>>>>>> parent of fd2cee7... La camara mira al cubo cuando se presiona W
   // Render the scene.
   effect.render(scene, camera);
 
@@ -212,8 +176,6 @@ function onVRDisplayPresentChange() {
   onResize();
     
 }
-<<<<<<< HEAD
-<<<<<<< HEAD
     //############################### Nuevas Funciones ##################
     function onKeyDown( event ){
 
@@ -235,23 +197,14 @@ var checkKeyStates = function(){
 
     if (keyState[38] || keyState[87]) {
         // up arrow or 'w' - camera  reset
-        cameraControl = true;
-        
-//        controls.resetPose();
-//        controls.freeze = true;
-//        controls.enableManualDrag = false;
-    }
-    if (keyState[32] || keyState[75]) {
-        // 'space' - camera  reset
-        cameraControl = false;
-        
+        //set camera to look at the cube
+        console.log("locotron");
+        camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
+        // controls.update();
+        // vrDisplay.resetPose();
     }
 
 };
-=======
->>>>>>> parent of fd2cee7... La camara mira al cubo cuando se presiona W
-=======
->>>>>>> parent of fd2cee7... La camara mira al cubo cuando se presiona W
 
 // Kick off animation loop.
 requestAnimationFrame(animate);
@@ -269,7 +222,6 @@ document.querySelector('button#vr').addEventListener('click', function() {
 });
 document.querySelector('button#reset').addEventListener('click', function() {
   vrDisplay.resetPose();
-    
 });
 
 function enterFullscreen (el) {
