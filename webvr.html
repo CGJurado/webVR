@@ -82,6 +82,7 @@ document.body.appendChild(renderer.domElement);
 // Create a three.js scene.
 var scene = new THREE.Scene();
 
+<<<<<<< HEAD
 //keyboard
 var keyState = {};
 
@@ -91,6 +92,8 @@ document.addEventListener('keyup', onKeyUp, false );
 //Camera toggle boolean
 var cameraControl = false;
 
+=======
+>>>>>>> parent of fd2cee7... La camara mira al cubo cuando se presiona W
 // Create a three.js camera.
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
 
@@ -155,6 +158,7 @@ function animate(timestamp) {
 <<<<<<< HEAD
 
   // Update VR headset position and apply to camera.
+<<<<<<< HEAD
   // controls.update();
 
   checkKeyStates();
@@ -174,6 +178,11 @@ function animate(timestamp) {
     }
      
 >>>>>>> origin/master
+=======
+  controls.update();
+    //set camera to look at the cube
+    camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
+>>>>>>> parent of fd2cee7... La camara mira al cubo cuando se presiona W
   // Render the scene.
   effect.render(scene, camera);
 
@@ -194,6 +203,7 @@ function onVRDisplayPresentChange() {
   onResize();
     
 }
+<<<<<<< HEAD
     //############################### Nuevas Funciones ##################
     function onKeyDown( event ){
 
@@ -228,6 +238,8 @@ var checkKeyStates = function(){
     }
 
 };
+=======
+>>>>>>> parent of fd2cee7... La camara mira al cubo cuando se presiona W
 
 // Kick off animation loop.
 requestAnimationFrame(animate);
