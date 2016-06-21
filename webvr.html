@@ -90,6 +90,9 @@ var scene = new THREE.Scene();
 //keyboard
 var keyState = {};
 
+var moveSpeed = 0.1;
+var turnSpeed = 0.1;
+
 document.addEventListener('keydown', onKeyDown, false );
 document.addEventListener('keyup', onKeyUp, false );
 
@@ -213,7 +216,7 @@ var material = new THREE.MeshNormalMaterial();
 var cube = new THREE.Mesh(geometry, material);
 
 // Position cube mesh
-cube.position.z = -1;
+cube.position.z = 1;
     //cube.position.x = 1;
 
 // Add cube mesh to your three.js scene
@@ -226,7 +229,7 @@ function animate(timestamp) {
   lastRender = timestamp;
 
   // Apply rotation to cube mesh
-  cube.rotation.y += delta * 0.0006;
+  //cube.rotation.y += delta * 0.0006;
 
   // Update VR headset position and apply to camera.
   controls.update();
@@ -234,7 +237,11 @@ function animate(timestamp) {
   checkKeyStates();
 
   //set camera to look at the cube
-  //camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
+  camera.position.y = cube.position.y + 1;
+  camera.position.x = cube.position.x + 1 * Math.sin( cube.rotation.y );
+  camera.position.z = cube.position.z + 1 * Math.cos( cube.rotation.y );
+  camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
+  checkKeyStates();
   
   // Render the scene.
   effect.render(scene, camera);
@@ -288,13 +295,40 @@ var checkKeyStates = function(){
 
     if (keyState[32]) {
         // spacebar - camera  reset
-        // set camera to look at the cube
-        camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
-        vrDisplay.resetPose();
-        //controls.update();
+        camera.position.y = cube.position.y + 6;
     }
 
+    if (keyState[38] || keyState[87]) {
+        // up arrow or 'w' - move forward
+        cube.position.x -= moveSpeed * Math.sin(cube.rotation.y);
+        cube.position.z -= moveSpeed * Math.cos(cube.rotation.y);
+    }
+    if (keyState[40] || keyState[83]) {
+        // down arrow or 's' - move backward
+        cube.position.x += moveSpeed * Math.sin(cube.rotation.y);
+        cube.position.z += moveSpeed * Math.cos(cube.rotation.y);
+    }
+    if (keyState[37] || keyState[65]) {
+        // left arrow or 'a' - rotate left
+        cube.rotation.y += turnSpeed;
+    }
+    if (keyState[39] || keyState[68]) {
+        // right arrow or 'd' - rotate right
+        cube.rotation.y -= turnSpeed;
+    }
+    if (keyState[81]) {
+        // 'q' - strafe left
+        cube.position.x -= moveSpeed * Math.cos(cube.rotation.y);
+        cube.position.z += moveSpeed * Math.sin(cube.rotation.y);
+    }
+    if (keyState[69]) {
+        // 'e' - strage right
+        cube.position.x += moveSpeed * Math.cos(cube.rotation.y);
+        cube.position.z -= moveSpeed * Math.sin(cube.rotation.y);
+    }
 };
+
+
 
 // Kick off animation loop.
 requestAnimationFrame(animate);

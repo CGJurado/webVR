@@ -8,6 +8,12 @@ var playerData;
 
 var otherPlayers = [], otherPlayersId = [];
 
+var boxWidth;
+var controls;
+
+var skybox;
+var sun;
+
 var loadWorld = function(){
 
     init();
@@ -20,23 +26,53 @@ var loadWorld = function(){
 
         scene = new THREE.Scene();
 
-        camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+        // camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
         camera.position.z = 5;
         //camera.lookAt( new THREE.Vector3(0,0,0));
 
-        renderer = new THREE.WebGLRenderer( { alpha: true} );
+        renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+        // renderer = new THREE.WebGLRenderer( { alpha: true} );
         renderer.setSize( window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.floor(window.devicePixelRatio));
 
         raycaster = new THREE.Raycaster();
         //Add Objects To the Scene HERE-------------------
 
+    //     var cube_geometry = new THREE.BoxGeometry(data.sizeX, data.sizeY, data.sizeZ);
+    // var cube_material = new THREE.MeshBasicMaterial({color: data.color, wireframe: false});
+    // player = new THREE.Mesh(cube_geometry, cube_material);
+
         //Sphere------------------
-        var sphere_geometry = new THREE.SphereGeometry(1);
-        var sphere_material = new THREE.MeshNormalMaterial();
+        var sphere_geometry = new THREE.SphereGeometry(10);
+        // var sphere_material = new THREE.MeshNormalMaterial();
+        var sphere_material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
         sphere = new THREE.Mesh( sphere_geometry, sphere_material );
+
+        // Apply VR headset positional data to camera.
+        controls = new THREE.VRControls(camera);
+
+        // Apply VR stereo rendering to renderer.
+        var effect = new THREE.VREffect(renderer);
+        effect.setSize(window.innerWidth, window.innerHeight);
+
+        // Add a repeating grid as a skybox.
+        boxWidth = 256;
+        var loader = new THREE.TextureLoader();
+        loader.load('img/box.png', onTextureLoaded);
+
+        // Get the VRDisplay and save it for later.
+        var vrDisplay = null;
+        navigator.getVRDisplays().then(function(displays) {
+          if (displays.length > 0) {
+            vrDisplay = displays[0];
+          }
+        });
 
         scene.add( sphere );
         objects.push( sphere ); //if you are interested in detecting an intersection with this sphere
+        sphere.position.x += 1;
+        sphere.position.z -= 200;
 
         //Events------------------------------------------
         document.addEventListener('click', onMouseClick, false );
@@ -54,6 +90,7 @@ var loadWorld = function(){
     }
 
     function animate(){
+        if (skybox) {skybox.rotation.y += 0.001;}
         requestAnimationFrame( animate );
         render();
     }
@@ -167,7 +204,7 @@ var updateCameraPosition = function(){
         camera.position.y = player.position.y + 20;
     }
     else {
-        camera.position.y = player.position.y + 6;
+        camera.position.y = player.position.y + 3;
     }
     camera.position.x = player.position.x + 6 * Math.sin( player.rotation.y );
     camera.position.z = player.position.z + 6 * Math.cos( player.rotation.y );
@@ -274,3 +311,37 @@ var playerForId = function(id){
     }
     return otherPlayers[index];
 };
+
+function onTextureLoaded(texture) {
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(1, 1);
+
+  var geometry = new THREE.SphereGeometry(boxWidth, boxWidth, boxWidth);
+  var material = new THREE.MeshBasicMaterial({
+    map: texture,
+    color: 0xFFFFFF,//color: 0x01BE00,
+    side: THREE.BackSide
+  });
+
+  skybox = new THREE.Mesh(geometry, material);
+  scene.add(skybox);
+}
+
+function onVRDisplayPresentChange() {
+  console.log('onVRDisplayPresentChange');
+  onResize();
+    
+}
+
+function enterFullscreen (el) {
+  if (el.requestFullscreen) {
+    el.requestFullscreen();
+  } else if (el.mozRequestFullScreen) {
+    el.mozRequestFullScreen();
+  } else if (el.webkitRequestFullscreen) {
+    el.webkitRequestFullscreen();
+  } else if (el.msRequestFullscreen) {
+    el.msRequestFullscreen();
+  }
+}
