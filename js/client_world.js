@@ -11,10 +11,14 @@ var otherPlayers = [], otherPlayersId = [];
 var boxWidth;
 var controls;
 
+<<<<<<< HEAD
 var playerChangeCount;
 
 var skybox;
 var sky;
+=======
+var skybox;
+>>>>>>> origin/master
 var sun;
 
 var loadWorld = function(){
@@ -33,7 +37,11 @@ var loadWorld = function(){
         camera.position.z = 5;
         //camera.lookAt( new THREE.Vector3(0,0,0));
 
+<<<<<<< HEAD
         renderer = new THREE.WebGLRenderer({antialias: false, alpha: true});
+=======
+        renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+>>>>>>> origin/master
         // renderer = new THREE.WebGLRenderer( { alpha: true} );
         renderer.setSize( window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.floor(window.devicePixelRatio));
@@ -41,8 +49,16 @@ var loadWorld = function(){
         raycaster = new THREE.Raycaster();
         //Add Objects To the Scene HERE-------------------
 
+    //     var cube_geometry = new THREE.BoxGeometry(data.sizeX, data.sizeY, data.sizeZ);
+    // var cube_material = new THREE.MeshBasicMaterial({color: data.color, wireframe: false});
+    // player = new THREE.Mesh(cube_geometry, cube_material);
+
         //Sphere------------------
+<<<<<<< HEAD
         var sphere_geometry = new THREE.SphereGeometry(32,32,32);
+=======
+        var sphere_geometry = new THREE.SphereGeometry(10);
+>>>>>>> origin/master
         // var sphere_material = new THREE.MeshNormalMaterial();
         var sphere_material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
         sphere = new THREE.Mesh( sphere_geometry, sphere_material );
@@ -55,9 +71,15 @@ var loadWorld = function(){
         effect.setSize(window.innerWidth, window.innerHeight);
 
         // Add a repeating grid as a skybox.
+<<<<<<< HEAD
         // boxWidth = 640;
         // var loader = new THREE.TextureLoader();
         // loader.load('img/box.png', onTextureLoaded);
+=======
+        boxWidth = 256;
+        var loader = new THREE.TextureLoader();
+        loader.load('img/box.png', onTextureLoaded);
+>>>>>>> origin/master
 
         // Get the VRDisplay and save it for later.
         var vrDisplay = null;
@@ -70,7 +92,11 @@ var loadWorld = function(){
         scene.add( sphere );
         objects.push( sphere ); //if you are interested in detecting an intersection with this sphere
         sphere.position.x += 1;
+<<<<<<< HEAD
         sphere.position.z -= 640;
+=======
+        sphere.position.z -= 200;
+>>>>>>> origin/master
 
         //Events------------------------------------------
         document.addEventListener('click', onMouseClick, false );
@@ -88,7 +114,11 @@ var loadWorld = function(){
     }
 
     function animate(){
+<<<<<<< HEAD
         //if (skybox) {skybox.rotation.y += 0.001;}
+=======
+        if (skybox) {skybox.rotation.y += 0.001;}
+>>>>>>> origin/master
         requestAnimationFrame( animate );
         render();
     }
@@ -197,7 +227,17 @@ var createPlayer = function(data){
 };
 
 var updateCameraPosition = function(){
+<<<<<<< HEAD
     camera.position.y = player.position.y + 3;
+=======
+    if (keyState[32]) {
+        // spacebar - Zoom 
+        camera.position.y = player.position.y + 20;
+    }
+    else {
+        camera.position.y = player.position.y + 3;
+    }
+>>>>>>> origin/master
     camera.position.x = player.position.x + 6 * Math.sin( player.rotation.y );
     camera.position.z = player.position.z + 6 * Math.cos( player.rotation.y );
 };
@@ -346,6 +386,7 @@ var playerForId = function(id){
     return otherPlayers[index];
 };
 
+<<<<<<< HEAD
 // function onTextureLoaded(texture) {
 //   texture.wrapS = THREE.RepeatWrapping;
 //   texture.wrapT = THREE.RepeatWrapping;
@@ -365,6 +406,28 @@ var playerForId = function(id){
 function onVRDisplayPresentChange() {
   console.log('onVRDisplayPresentChange');
   onResize();  
+=======
+function onTextureLoaded(texture) {
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(1, 1);
+
+  var geometry = new THREE.SphereGeometry(boxWidth, boxWidth, boxWidth);
+  var material = new THREE.MeshBasicMaterial({
+    map: texture,
+    color: 0xFFFFFF,//color: 0x01BE00,
+    side: THREE.BackSide
+  });
+
+  skybox = new THREE.Mesh(geometry, material);
+  scene.add(skybox);
+}
+
+function onVRDisplayPresentChange() {
+  console.log('onVRDisplayPresentChange');
+  onResize();
+    
+>>>>>>> origin/master
 }
 
 function enterFullscreen (el) {
