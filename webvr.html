@@ -69,8 +69,13 @@ document.addEventListener('touchmove', function(e) {
 <!-- A polyfill for the WebVR API.  -->
 <script src="/js/webvr-polyfill.js"></script>
 
+<script src="/js/OrbitControls.js"></script>
+<script src="/js/SkyShader.js"></script>
+<script src="/js/Detector.js"></script>
+<script src="/js/dat.gui.min.js"></script>
 
 <script>
+
 // Setup three.js WebGL renderer. Note: Antialiasing is a big performance hit.
 // Only enable it if you actually need to.
 var renderer = new THREE.WebGLRenderer({antialias: true});
@@ -85,6 +90,9 @@ var scene = new THREE.Scene();
 //keyboard
 var keyState = {};
 
+var moveSpeed = 0.1;
+var turnSpeed = 0.1;
+
 document.addEventListener('keydown', onKeyDown, false );
 document.addEventListener('keyup', onKeyUp, false );
 
@@ -98,11 +106,85 @@ var controls = new THREE.VRControls(camera);
 var effect = new THREE.VREffect(renderer);
 effect.setSize(window.innerWidth, window.innerHeight);
 
-
 // Add a repeating grid as a skybox.
 var boxWidth = 5;
 var loader = new THREE.TextureLoader();
 loader.load('img/box.png', onTextureLoaded);
+
+initSky();
+
+function initSky() {
+
+        var helper = new THREE.GridHelper( 5000, 5000 );
+        helper.color1.setHex( 0xffffff );
+        helper.color2.setHex( 0xffffff );
+
+        scene.add( helper );
+        // Add Sky Mesh
+        sky = new THREE.Sky();
+        scene.add( sky.mesh );
+
+        // Add Sun Helper
+        sunSphere = new THREE.Mesh(
+          new THREE.SphereBufferGeometry( 20000, 16, 8 ),
+          new THREE.MeshBasicMaterial( { color: 0xffffff } )
+        );
+        sunSphere.position.y = - 700000;
+        sunSphere.visible = false;
+        scene.add( sunSphere );
+
+        /// GUI
+
+        var effectController  = {
+          turbidity: 10,
+          reileigh: 2,
+          mieCoefficient: 0.005,
+          mieDirectionalG: 0.8,
+          luminance: 1,
+          inclination: 0.49, // elevation / inclination
+          azimuth: 0.25, // Facing front,
+          sun: ! true
+        };
+
+        var distance = 400000;
+
+        function guiChanged() {
+
+          var uniforms = sky.uniforms;
+          uniforms.turbidity.value = effectController.turbidity;
+          uniforms.reileigh.value = effectController.reileigh;
+          uniforms.luminance.value = effectController.luminance;
+          uniforms.mieCoefficient.value = effectController.mieCoefficient;
+          uniforms.mieDirectionalG.value = effectController.mieDirectionalG;
+
+          var theta = Math.PI * ( effectController.inclination - 0.5 );
+          var phi = 2 * Math.PI * ( effectController.azimuth - 0.5 );
+
+          sunSphere.position.x = distance * Math.cos( phi );
+          sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
+          sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
+
+          sunSphere.visible = effectController.sun;
+
+          sky.uniforms.sunPosition.value.copy( sunSphere.position );
+
+          renderer.render( scene, camera );
+
+        }
+
+        var gui = new dat.GUI();
+
+        gui.add( effectController, "turbidity", 1.0, 20.0, 0.1 ).onChange( guiChanged );
+        gui.add( effectController, "reileigh", 0.0, 4, 0.001 ).onChange( guiChanged );
+        gui.add( effectController, "mieCoefficient", 0.0, 0.1, 0.001 ).onChange( guiChanged );
+        gui.add( effectController, "mieDirectionalG", 0.0, 1, 0.001 ).onChange( guiChanged );
+        gui.add( effectController, "luminance", 0.0, 2 ).onChange( guiChanged );
+        gui.add( effectController, "inclination", 0, 1, 0.0001 ).onChange( guiChanged );
+        gui.add( effectController, "azimuth", 0, 1, 0.0001 ).onChange( guiChanged );
+        gui.add( effectController, "sun" ).onChange( guiChanged );
+
+        guiChanged();
+}
 
 // Get the VRDisplay and save it for later.
 var vrDisplay = null;
@@ -120,7 +202,7 @@ function onTextureLoaded(texture) {
   var geometry = new THREE.BoxGeometry(boxWidth, boxWidth, boxWidth);
   var material = new THREE.MeshBasicMaterial({
     map: texture,
-    color: 0x01BE00,
+    color: 0xFFFFFF,//color: 0x01BE00,
     side: THREE.BackSide
   });
 
@@ -134,8 +216,8 @@ var material = new THREE.MeshNormalMaterial();
 var cube = new THREE.Mesh(geometry, material);
 
 // Position cube mesh
-cube.position.z = -1;
-    cube.position.x = 1;
+cube.position.z = 1;
+    //cube.position.x = 1;
 
 // Add cube mesh to your three.js scene
 scene.add(cube);
@@ -147,15 +229,20 @@ function animate(timestamp) {
   lastRender = timestamp;
 
   // Apply rotation to cube mesh
-  cube.rotation.y += delta * 0.0006;
+  //cube.rotation.y += delta * 0.0006;
 
   // Update VR headset position and apply to camera.
   controls.update();
 
   checkKeyStates();
 
-    //set camera to look at the cube
-    // camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
+  //set camera to look at the cube
+  camera.position.y = cube.position.y + 1;
+  camera.position.x = cube.position.x + 1 * Math.sin( cube.rotation.y );
+  camera.position.z = cube.position.z + 1 * Math.cos( cube.rotation.y );
+  camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
+  checkKeyStates();
+  
   // Render the scene.
   effect.render(scene, camera);
 
@@ -167,9 +254,20 @@ function onResize() {
   console.log('Resizing to %s x %s.', window.innerWidth, window.innerHeight);
   effect.setSize(window.innerWidth, window.innerHeight);
   camera.aspect = window.innerWidth / window.innerHeight;
+  camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
   camera.updateProjectionMatrix();
-    
 }
+
+function onWindowResize() {
+
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize( window.innerWidth, window.innerHeight );
+
+        render();
+
+      }
 
 function onVRDisplayPresentChange() {
   console.log('onVRDisplayPresentChange');
@@ -195,16 +293,42 @@ function onVRDisplayPresentChange() {
 
 var checkKeyStates = function(){
 
-    if (keyState[38] || keyState[87]) {
-        // up arrow or 'w' - camera  reset
-        //set camera to look at the cube
-        console.log("locotron");
-        camera.lookAt(new THREE.Vector3(cube.position.x, cube.position.y, cube.position.z));
-        // controls.update();
-        // vrDisplay.resetPose();
+    if (keyState[32]) {
+        // spacebar - camera  reset
+        camera.position.y = cube.position.y + 6;
     }
 
+    if (keyState[38] || keyState[87]) {
+        // up arrow or 'w' - move forward
+        cube.position.x -= moveSpeed * Math.sin(cube.rotation.y);
+        cube.position.z -= moveSpeed * Math.cos(cube.rotation.y);
+    }
+    if (keyState[40] || keyState[83]) {
+        // down arrow or 's' - move backward
+        cube.position.x += moveSpeed * Math.sin(cube.rotation.y);
+        cube.position.z += moveSpeed * Math.cos(cube.rotation.y);
+    }
+    if (keyState[37] || keyState[65]) {
+        // left arrow or 'a' - rotate left
+        cube.rotation.y += turnSpeed;
+    }
+    if (keyState[39] || keyState[68]) {
+        // right arrow or 'd' - rotate right
+        cube.rotation.y -= turnSpeed;
+    }
+    if (keyState[81]) {
+        // 'q' - strafe left
+        cube.position.x -= moveSpeed * Math.cos(cube.rotation.y);
+        cube.position.z += moveSpeed * Math.sin(cube.rotation.y);
+    }
+    if (keyState[69]) {
+        // 'e' - strage right
+        cube.position.x += moveSpeed * Math.cos(cube.rotation.y);
+        cube.position.z -= moveSpeed * Math.sin(cube.rotation.y);
+    }
 };
+
+
 
 // Kick off animation loop.
 requestAnimationFrame(animate);
@@ -235,6 +359,12 @@ function enterFullscreen (el) {
     el.msRequestFullscreen();
   }
 }
+
+function render() {
+
+        renderer.render( scene, camera );
+
+      }
 
 </script>
 

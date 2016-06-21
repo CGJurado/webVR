@@ -8,35 +8,69 @@ var playerData;
 
 var otherPlayers = [], otherPlayersId = [];
 
+var boxWidth;
+var controls;
+
+var playerChangeCount;
+
+var skybox;
+var sky;
+var sun;
+
 var loadWorld = function(){
 
     init();
     animate();
 
     function init(){
-
         //Setup------------------------------------------
         container = document.getElementById('container');
 
         scene = new THREE.Scene();
 
-        camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+        // camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
         camera.position.z = 5;
         //camera.lookAt( new THREE.Vector3(0,0,0));
 
-        renderer = new THREE.WebGLRenderer( { alpha: true} );
+        renderer = new THREE.WebGLRenderer({antialias: false, alpha: true});
+        // renderer = new THREE.WebGLRenderer( { alpha: true} );
         renderer.setSize( window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.floor(window.devicePixelRatio));
 
         raycaster = new THREE.Raycaster();
         //Add Objects To the Scene HERE-------------------
 
         //Sphere------------------
-        var sphere_geometry = new THREE.SphereGeometry(1);
-        var sphere_material = new THREE.MeshNormalMaterial();
+        var sphere_geometry = new THREE.SphereGeometry(32,32,32);
+        // var sphere_material = new THREE.MeshNormalMaterial();
+        var sphere_material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
         sphere = new THREE.Mesh( sphere_geometry, sphere_material );
+
+        // Apply VR headset positional data to camera.
+        controls = new THREE.VRControls(camera);
+
+        // Apply VR stereo rendering to renderer.
+        var effect = new THREE.VREffect(renderer);
+        effect.setSize(window.innerWidth, window.innerHeight);
+
+        // Add a repeating grid as a skybox.
+        // boxWidth = 640;
+        // var loader = new THREE.TextureLoader();
+        // loader.load('img/box.png', onTextureLoaded);
+
+        // Get the VRDisplay and save it for later.
+        var vrDisplay = null;
+        navigator.getVRDisplays().then(function(displays) {
+          if (displays.length > 0) {
+            vrDisplay = displays[0];
+          }
+        });
 
         scene.add( sphere );
         objects.push( sphere ); //if you are interested in detecting an intersection with this sphere
+        sphere.position.x += 1;
+        sphere.position.z -= 640;
 
         //Events------------------------------------------
         document.addEventListener('click', onMouseClick, false );
@@ -54,6 +88,7 @@ var loadWorld = function(){
     }
 
     function animate(){
+        //if (skybox) {skybox.rotation.y += 0.001;}
         requestAnimationFrame( animate );
         render();
     }
@@ -63,9 +98,9 @@ var loadWorld = function(){
 
             updateCameraPosition();
 
-            checkKeyStates();
-
             camera.lookAt( player.position );
+
+            checkKeyStates();
         }
         //Render Scene---------------------------------------
         renderer.clear();
@@ -78,7 +113,7 @@ var loadWorld = function(){
         if ( intersects.length > 0 ){
             //If object is intersected by mouse pointer, do something
             if (intersects[0].object == sphere){
-                alert("This is a sphere!");
+                alert("This is the sun!");
             }
         }
     }
@@ -162,13 +197,7 @@ var createPlayer = function(data){
 };
 
 var updateCameraPosition = function(){
-    if (keyState[32]) {
-        // spacebar - Zoom 
-        camera.position.y = player.position.y + 20;
-    }
-    else {
-        camera.position.y = player.position.y + 6;
-    }
+    camera.position.y = player.position.y + 3;
     camera.position.x = player.position.x + 6 * Math.sin( player.rotation.y );
     camera.position.z = player.position.z + 6 * Math.cos( player.rotation.y );
 };
@@ -239,7 +268,50 @@ var checkKeyStates = function(){
         updatePlayerData();
         socket.emit('updatePosition', playerData);
     }
+    if (keyState[32]) {
+        // spacebar - Zoom
+        //camera.position.y = player.position.y + 20;
+        camera.position.y = player.position.y + 20;
+        camera.position.x = player.position.x + Math.sin( player.rotation.y );
+        camera.position.z = player.position.z + Math.cos( player.rotation.y );
+        camera.lookAt(player.position);
+    }
 
+    if (keyState[48]) {
+        // '0' - Noon
+        camera.position.y = otherPlayers[0].position.y + 3;
+        camera.position.x = otherPlayers[0].position.x + 6 * Math.sin( otherPlayers[0].rotation.y );
+        camera.position.z = otherPlayers[0].position.z + 6 * Math.cos( otherPlayers[0].rotation.y );
+        camera.lookAt(otherPlayers[0].position);
+    }
+    // if (keyState[49]) {
+    //     // '1' - Morning
+    //     skybox.material.color.setHex(0xE4E5F7);
+    // }
+    // if (keyState[50]) {
+    //     // '2' - Evening
+    //     skybox.material.color.setHex(0x9A9FF1);
+    // }
+    // if (keyState[51]) {
+    //     // '3' - Dawn
+    //     skybox.material.color.setHex(0xFAA658);
+    // }
+    // if (keyState[52]) {
+    //     // '4' - Clear
+    //     skybox.material.color.setHex(0xFFFFFF);
+    // }
+    // if (keyState[53]) {
+    //     // '5' - Midnight
+    //     skybox.material.color.setHex(0x9A9FF1);
+    // }
+    // if (keyState[54]) {
+    //     // '6' - Midnight
+    //     skybox.material.color.setHex(0x9A9FF1);
+    // }
+    // if (keyState[55]) {
+    //     // '7' - Midnight
+    //     skybox.material.color.setHex(0x9A9FF1);
+    // }
 };
 
 var addOtherPlayer = function(data){
@@ -255,7 +327,6 @@ var addOtherPlayer = function(data){
     otherPlayers.push( otherPlayer );
     objects.push( otherPlayer );
     scene.add( otherPlayer );
-
 };
 
 var removeOtherPlayer = function(data){
@@ -274,3 +345,36 @@ var playerForId = function(id){
     }
     return otherPlayers[index];
 };
+
+// function onTextureLoaded(texture) {
+//   texture.wrapS = THREE.RepeatWrapping;
+//   texture.wrapT = THREE.RepeatWrapping;
+//   texture.repeat.set(1, 1);
+
+//   var geometry = new THREE.SphereGeometry(boxWidth, boxWidth, boxWidth);
+//   var material = new THREE.MeshBasicMaterial({
+//     map: texture,
+//     color: 0xFFFFFF,//color: 0x01BE00,
+//     side: THREE.BackSide
+//   });
+
+//   skybox = new THREE.Mesh(geometry, material);
+//   scene.add(skybox);
+// }
+
+function onVRDisplayPresentChange() {
+  console.log('onVRDisplayPresentChange');
+  onResize();  
+}
+
+function enterFullscreen (el) {
+  if (el.requestFullscreen) {
+    el.requestFullscreen();
+  } else if (el.mozRequestFullScreen) {
+    el.mozRequestFullScreen();
+  } else if (el.webkitRequestFullscreen) {
+    el.webkitRequestFullscreen();
+  } else if (el.msRequestFullscreen) {
+    el.msRequestFullscreen();
+  }
+}
