@@ -11,14 +11,10 @@ var otherPlayers = [], otherPlayersId = [];
 var boxWidth;
 var controls;
 
-<<<<<<< HEAD
 var playerChangeCount;
 
 var skybox;
 var sky;
-=======
-var skybox;
->>>>>>> origin/master
 var sun;
 
 var loadWorld = function(){
@@ -33,15 +29,11 @@ var loadWorld = function(){
         scene = new THREE.Scene();
 
         // camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
-        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000000);
         camera.position.z = 5;
         //camera.lookAt( new THREE.Vector3(0,0,0));
 
-<<<<<<< HEAD
         renderer = new THREE.WebGLRenderer({antialias: false, alpha: true});
-=======
-        renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
->>>>>>> origin/master
         // renderer = new THREE.WebGLRenderer( { alpha: true} );
         renderer.setSize( window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.floor(window.devicePixelRatio));
@@ -49,19 +41,11 @@ var loadWorld = function(){
         raycaster = new THREE.Raycaster();
         //Add Objects To the Scene HERE-------------------
 
-    //     var cube_geometry = new THREE.BoxGeometry(data.sizeX, data.sizeY, data.sizeZ);
-    // var cube_material = new THREE.MeshBasicMaterial({color: data.color, wireframe: false});
-    // player = new THREE.Mesh(cube_geometry, cube_material);
-
         //Sphere------------------
-<<<<<<< HEAD
-        var sphere_geometry = new THREE.SphereGeometry(32,32,32);
-=======
-        var sphere_geometry = new THREE.SphereGeometry(10);
->>>>>>> origin/master
-        // var sphere_material = new THREE.MeshNormalMaterial();
-        var sphere_material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
-        sphere = new THREE.Mesh( sphere_geometry, sphere_material );
+        // var sphere_geometry = new THREE.SphereGeometry(32,32,32);
+        // // var sphere_material = new THREE.MeshNormalMaterial();
+        // var sphere_material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
+        // sphere = new THREE.Mesh( sphere_geometry, sphere_material );
 
         // Apply VR headset positional data to camera.
         controls = new THREE.VRControls(camera);
@@ -69,17 +53,6 @@ var loadWorld = function(){
         // Apply VR stereo rendering to renderer.
         var effect = new THREE.VREffect(renderer);
         effect.setSize(window.innerWidth, window.innerHeight);
-
-        // Add a repeating grid as a skybox.
-<<<<<<< HEAD
-        // boxWidth = 640;
-        // var loader = new THREE.TextureLoader();
-        // loader.load('img/box.png', onTextureLoaded);
-=======
-        boxWidth = 256;
-        var loader = new THREE.TextureLoader();
-        loader.load('img/box.png', onTextureLoaded);
->>>>>>> origin/master
 
         // Get the VRDisplay and save it for later.
         var vrDisplay = null;
@@ -89,14 +62,10 @@ var loadWorld = function(){
           }
         });
 
-        scene.add( sphere );
-        objects.push( sphere ); //if you are interested in detecting an intersection with this sphere
-        sphere.position.x += 1;
-<<<<<<< HEAD
-        sphere.position.z -= 640;
-=======
-        sphere.position.z -= 200;
->>>>>>> origin/master
+        // scene.add( sphere );
+        // objects.push( sphere ); //if you are interested in detecting an intersection with this sphere
+        // sphere.position.x += 1;
+        // sphere.position.z -= 640;
 
         //Events------------------------------------------
         document.addEventListener('click', onMouseClick, false );
@@ -111,14 +80,81 @@ var loadWorld = function(){
         //Final touches-----------------------------------
         container.appendChild( renderer.domElement );
         document.body.appendChild( container );
+
+        initSky();
     }
 
+    function initSky() {
+
+				// Add Sky Mesh
+				sky = new THREE.Sky();
+				scene.add( sky.mesh );
+
+				// Add Sun Helper
+				sunSphere = new THREE.Mesh(
+					new THREE.SphereBufferGeometry( 20000, 16, 8 ),
+					new THREE.MeshBasicMaterial( { color: 0xffffff } )
+				);
+				sunSphere.position.y = - 700000;
+				sunSphere.visible = false;
+				scene.add( sunSphere );
+
+				/// GUI
+
+				var effectController  = {
+					turbidity: 10,
+					reileigh: 2,
+					mieCoefficient: 0.005,
+					mieDirectionalG: 0.8,
+					luminance: 1,
+					inclination: 0.49, // elevation / inclination
+					azimuth: 0.25, // Facing front,
+					sun: ! true
+				};
+
+				var distance = 400000;
+
+				function guiChanged() {
+
+					var uniforms = sky.uniforms;
+					uniforms.turbidity.value = effectController.turbidity;
+					uniforms.reileigh.value = effectController.reileigh;
+					uniforms.luminance.value = effectController.luminance;
+					uniforms.mieCoefficient.value = effectController.mieCoefficient;
+					uniforms.mieDirectionalG.value = effectController.mieDirectionalG;
+
+					var theta = Math.PI * ( effectController.inclination - 0.5 );
+					var phi = 2 * Math.PI * ( effectController.azimuth - 0.5 );
+
+					sunSphere.position.x = distance * Math.cos( phi );
+					sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
+					sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
+
+					sunSphere.visible = effectController.sun;
+
+					sky.uniforms.sunPosition.value.copy( sunSphere.position );
+
+					renderer.render( scene, camera );
+
+				}
+
+				// var gui = new dat.GUI();
+
+				// gui.add( effectController, "turbidity", 1.0, 20.0, 0.1 ).onChange( guiChanged );
+				// gui.add( effectController, "reileigh", 0.0, 4, 0.001 ).onChange( guiChanged );
+				// gui.add( effectController, "mieCoefficient", 0.0, 0.1, 0.001 ).onChange( guiChanged );
+				// gui.add( effectController, "mieDirectionalG", 0.0, 1, 0.001 ).onChange( guiChanged );
+				// gui.add( effectController, "luminance", 0.0, 2 ).onChange( guiChanged );
+				// gui.add( effectController, "inclination", 0, 1, 0.0001 ).onChange( guiChanged );
+				// gui.add( effectController, "azimuth", 0, 1, 0.0001 ).onChange( guiChanged );
+				// gui.add( effectController, "sun" ).onChange( guiChanged );
+
+				guiChanged();
+
+			}
+
     function animate(){
-<<<<<<< HEAD
         //if (skybox) {skybox.rotation.y += 0.001;}
-=======
-        if (skybox) {skybox.rotation.y += 0.001;}
->>>>>>> origin/master
         requestAnimationFrame( animate );
         render();
     }
@@ -138,14 +174,14 @@ var loadWorld = function(){
     }
 
     function onMouseClick(){
-        intersects = calculateIntersects( event );
+        // intersects = calculateIntersects( event );
 
-        if ( intersects.length > 0 ){
-            //If object is intersected by mouse pointer, do something
-            if (intersects[0].object == sphere){
-                alert("This is the sun!");
-            }
-        }
+        // if ( intersects.length > 0 ){
+        //     //If object is intersected by mouse pointer, do something
+        //     if (intersects[0].object == sphere){
+        //         alert("This is the sun!");
+        //     }
+        // }
     }
     function onMouseDown(){
 
@@ -227,17 +263,7 @@ var createPlayer = function(data){
 };
 
 var updateCameraPosition = function(){
-<<<<<<< HEAD
     camera.position.y = player.position.y + 3;
-=======
-    if (keyState[32]) {
-        // spacebar - Zoom 
-        camera.position.y = player.position.y + 20;
-    }
-    else {
-        camera.position.y = player.position.y + 3;
-    }
->>>>>>> origin/master
     camera.position.x = player.position.x + 6 * Math.sin( player.rotation.y );
     camera.position.z = player.position.z + 6 * Math.cos( player.rotation.y );
 };
@@ -331,27 +357,6 @@ var checkKeyStates = function(){
     // if (keyState[50]) {
     //     // '2' - Evening
     //     skybox.material.color.setHex(0x9A9FF1);
-    // }
-    // if (keyState[51]) {
-    //     // '3' - Dawn
-    //     skybox.material.color.setHex(0xFAA658);
-    // }
-    // if (keyState[52]) {
-    //     // '4' - Clear
-    //     skybox.material.color.setHex(0xFFFFFF);
-    // }
-    // if (keyState[53]) {
-    //     // '5' - Midnight
-    //     skybox.material.color.setHex(0x9A9FF1);
-    // }
-    // if (keyState[54]) {
-    //     // '6' - Midnight
-    //     skybox.material.color.setHex(0x9A9FF1);
-    // }
-    // if (keyState[55]) {
-    //     // '7' - Midnight
-    //     skybox.material.color.setHex(0x9A9FF1);
-    // }
 };
 
 var addOtherPlayer = function(data){
@@ -386,48 +391,9 @@ var playerForId = function(id){
     return otherPlayers[index];
 };
 
-<<<<<<< HEAD
-// function onTextureLoaded(texture) {
-//   texture.wrapS = THREE.RepeatWrapping;
-//   texture.wrapT = THREE.RepeatWrapping;
-//   texture.repeat.set(1, 1);
-
-//   var geometry = new THREE.SphereGeometry(boxWidth, boxWidth, boxWidth);
-//   var material = new THREE.MeshBasicMaterial({
-//     map: texture,
-//     color: 0xFFFFFF,//color: 0x01BE00,
-//     side: THREE.BackSide
-//   });
-
-//   skybox = new THREE.Mesh(geometry, material);
-//   scene.add(skybox);
-// }
-
 function onVRDisplayPresentChange() {
   console.log('onVRDisplayPresentChange');
   onResize();  
-=======
-function onTextureLoaded(texture) {
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(1, 1);
-
-  var geometry = new THREE.SphereGeometry(boxWidth, boxWidth, boxWidth);
-  var material = new THREE.MeshBasicMaterial({
-    map: texture,
-    color: 0xFFFFFF,//color: 0x01BE00,
-    side: THREE.BackSide
-  });
-
-  skybox = new THREE.Mesh(geometry, material);
-  scene.add(skybox);
-}
-
-function onVRDisplayPresentChange() {
-  console.log('onVRDisplayPresentChange');
-  onResize();
-    
->>>>>>> origin/master
 }
 
 function enterFullscreen (el) {

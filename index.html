@@ -9,7 +9,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/client_world.js"></script>
     <script src="/js/three.js"></script>
 
     <!-- VRControls.js applies the WebVR transformations to a three.js camera object. -->
@@ -25,6 +24,8 @@
     <script src="/js/SkyShader.js"></script>
     <script src="/js/Detector.js"></script>
     <script src="/js/dat.gui.min.js"></script>
+
+    <script src="/js/client_world.js"></script>
 
     <style>
     html, body {
@@ -53,137 +54,8 @@
 </head>
 <body>
 
-<div id="buttons">
-    <button id="fullscreen">Fullscreen</button>
-    <button id="vr">VR (WebVR/Mobile only)</button>
-    <button id="reset">Reset</button>
-</div>
-
-<div id="info"><a href="http://threejs.org" target="_blank">three.js</a> webgl - sky + sun shader
-
-    <br/><a href="https://plus.google.com/117614030945250277079/posts/MYkgKdvLhNj">More info</a> by <a href="http://twitter.com/blurspline">@blurspline</a>
-
-</div>
-
 <div id="container"></div>
 
-<<<<<<< HEAD
-=======
-
-<!-- <script>
-
-    var container;
-
-    var camera, skyControls, scene, skyRenderer;
-
-    var sky, sunSphere;
-
-    var moveSpeed = 0.1;
-    var turnSpeed = 0.1;
-
-    init();
-    render();
-
-    function initSky() {
-
-        // Add Sky Mesh
-        sky = new THREE.Sky();
-        scene.add( sky.mesh );
-
-        // Add Sun Helper
-        sunSphere = new THREE.Mesh(
-            new THREE.SphereBufferGeometry( 20000, 16, 8 ),
-            new THREE.MeshBasicMaterial( { color: 0xffffff } )
-        );
-        sunSphere.position.y = - 700000;
-        sunSphere.visible = false;
-        scene.add( sunSphere );
-
-        /// GUI
-
-        var effectController  = {
-            turbidity: 10,
-            reileigh: 2,
-            mieCoefficient: 0.005,
-            mieDirectionalG: 0.8,
-            luminance: 1,
-            inclination: 0.49, // elevation / inclination
-            azimuth: 0.25, // Facing front,
-            sun: ! true
-        };
-
-        var distance = 400000;
-
-        function guiChanged() {
-
-            var uniforms = sky.uniforms;
-            uniforms.turbidity.value = effectController.turbidity;
-            uniforms.reileigh.value = effectController.reileigh;
-            uniforms.luminance.value = effectController.luminance;
-            uniforms.mieCoefficient.value = effectController.mieCoefficient;
-            uniforms.mieDirectionalG.value = effectController.mieDirectionalG;
-
-            var theta = Math.PI * ( effectController.inclination - 0.5 );
-            var phi = 2 * Math.PI * ( effectController.azimuth - 0.5 );
-
-            sunSphere.position.x = distance * Math.cos( phi );
-            sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
-            sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
-
-            sunSphere.visible = true;
-
-            sky.uniforms.sunPosition.value.copy( sunSphere.position );
-
-            skyRenderer.render( scene, camera );
-        }
-
-        guiChanged();
-
-    }
-
-    function init() {
-
-        camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 100, 2000000 );
-        camera.position.set( 0, 100, 2000 );
-
-        //camera.setLens(20);
-
-        scene = new THREE.Scene();
-
-        skyRenderer = new THREE.WebGLRenderer();
-        skyRenderer.setPixelRatio( window.devicePixelRatio );
-        skyRenderer.setSize( window.innerWidth, window.innerHeight );
-        document.body.appendChild( skyRenderer.domElement );
-
-        skyControls = new THREE.OrbitControls( camera, skyRenderer.domElement );
-        skyControls.addEventListener( 'change', render );
-        //skyControls.maxPolarAngle = Math.PI / 2;
-        skyControls.enableZoom = false;
-        skyControls.enablePan = false;
-
-        initSky();
-
-        window.addEventListener( 'resize', onWindowResize, false );
-
-    }
-
-    function onWindowResize() {
-
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-
-        skyRenderer.setSize( window.innerWidth, window.innerHeight );
-
-        render();
-
-    }
-
-    function render() {
-        skyRenderer.render( scene , camera );
-    }
-
-</script> -->
->>>>>>> origin/master
 <script>
     // Reactions...
     var socket = io();
