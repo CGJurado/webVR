@@ -16,6 +16,8 @@ var playerChangeCount;
 var skybox;
 var sky;
 var sun;
+var distance = 400000;
+
 
 var loadWorld = function(){
 
@@ -95,6 +97,8 @@ var loadWorld = function(){
 					new THREE.SphereBufferGeometry( 20000, 16, 8 ),
 					new THREE.MeshBasicMaterial( { color: 0xffffff } )
 				);
+        
+                
 				sunSphere.position.y = - 700000;
 				sunSphere.visible = false;
 				scene.add( sunSphere );
@@ -112,7 +116,7 @@ var loadWorld = function(){
 					sun: ! true
 				};
 
-				var distance = 400000;
+				
 
 				function guiChanged() {
 
@@ -123,12 +127,12 @@ var loadWorld = function(){
 					uniforms.mieCoefficient.value = effectController.mieCoefficient;
 					uniforms.mieDirectionalG.value = effectController.mieDirectionalG;
 
-					var theta = Math.PI * ( effectController.inclination - 0.5 );
-					var phi = 2 * Math.PI * ( effectController.azimuth - 0.5 );
-
-					sunSphere.position.x = distance * Math.cos( phi );
-					sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
-					sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
+//					var theta = Math.PI * ( effectController.inclination - 0.5 );
+//					var phi = 2 * Math.PI * ( effectController.azimuth - 0.5 );
+//
+//					sunSphere.position.x = distance * Math.cos( phi );
+//					sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
+//					sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
 
 					sunSphere.visible = effectController.sun;
 
@@ -138,17 +142,17 @@ var loadWorld = function(){
 
 				}
 
-				// var gui = new dat.GUI();
-
-				// gui.add( effectController, "turbidity", 1.0, 20.0, 0.1 ).onChange( guiChanged );
-				// gui.add( effectController, "reileigh", 0.0, 4, 0.001 ).onChange( guiChanged );
-				// gui.add( effectController, "mieCoefficient", 0.0, 0.1, 0.001 ).onChange( guiChanged );
-				// gui.add( effectController, "mieDirectionalG", 0.0, 1, 0.001 ).onChange( guiChanged );
-				// gui.add( effectController, "luminance", 0.0, 2 ).onChange( guiChanged );
-				// gui.add( effectController, "inclination", 0, 1, 0.0001 ).onChange( guiChanged );
-				// gui.add( effectController, "azimuth", 0, 1, 0.0001 ).onChange( guiChanged );
-				// gui.add( effectController, "sun" ).onChange( guiChanged );
-
+//				 var gui = new dat.GUI();
+//
+//				 gui.add( effectController, "turbidity", 1.0, 20.0, 0.1 ).onChange( guiChanged );
+//				 gui.add( effectController, "reileigh", 0.0, 4, 0.001 ).onChange( guiChanged );
+//				 gui.add( effectController, "mieCoefficient", 0.0, 0.1, 0.001 ).onChange( guiChanged );
+//				 gui.add( effectController, "mieDirectionalG", 0.0, 1, 0.001 ).onChange( guiChanged );
+//				 gui.add( effectController, "luminance", 0.0, 2 ).onChange( guiChanged );
+//				 gui.add( effectController, "inclination", 0, 1, 0.0001 ).onChange( guiChanged );
+//				 gui.add( effectController, "azimuth", 0, 1, 0.0001 ).onChange( guiChanged );
+//				 gui.add( effectController, "sun" ).onChange( guiChanged );
+//
 				guiChanged();
 
 			}
@@ -280,6 +284,23 @@ var updatePlayerPosition = function(data){
     somePlayer.rotation.y = data.r_y;
     somePlayer.rotation.z = data.r_z;
 
+};
+
+//################################################ new update sun position Function ##############
+var updateSunPosition = function(data){
+    var uniforms = sky.uniforms;
+    var theta = Math.PI * ( data.azimuth );
+    var phi = 2 * Math.PI * ( data.altitude );
+
+    sunSphere.position.x = distance * Math.cos( phi );
+    sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
+    sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
+    
+    console.log(data);
+    
+    sky.uniforms.sunPosition.value.copy( sunSphere.position );
+
+    renderer.render( scene, camera );
 };
 
 var updatePlayerData = function(){

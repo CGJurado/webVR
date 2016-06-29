@@ -1,5 +1,5 @@
 var express = require('express');
-
+var SunCalc = require('suncalc');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -21,12 +21,16 @@ app.get('/js/client_world.js', function(req, res){
 
 io.on('connection', function(socket){
     console.log('a user connected');
+    var actualSunPos = SunCalc.getPosition(new Date(), 51.5, -0.1);
+
+    console.log(actualSunPos);
 
     var id = socket.id;
     world.addPlayer(id);
 
     var player = world.playerForId(id);
     socket.emit('createPlayer', player);
+    socket.emit('updateSunPos', actualSunPos);
 
     socket.broadcast.emit('addOtherPlayer', player);
 

@@ -76,6 +76,9 @@
     socket.on('removeOtherPlayer', function(data){
         removeOtherPlayer(data);
     });
+    socket.on('updateSunPos', function(data){
+        updateSunPosition(data);
+    });
 
 </script>
 
