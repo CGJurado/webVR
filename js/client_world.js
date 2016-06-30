@@ -8,16 +8,15 @@ var playerData;
 
 var otherPlayers = [], otherPlayersId = [];
 
-var boxWidth;
 var controls;
-
 var playerChangeCount;
 
-var skybox;
-var sky;
-var sun;
+var skybox, sky, sun;
+var floor, boxWidth;
 var distance = 400000;
 
+var cube1, cube2, cube3, cube4, cube5, cube6;
+var reticle;
 
 var loadWorld = function(){
 
@@ -35,7 +34,7 @@ var loadWorld = function(){
         camera.position.z = 5;
         //camera.lookAt( new THREE.Vector3(0,0,0));
 
-        renderer = new THREE.WebGLRenderer({antialias: false, alpha: true});
+        renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
         // renderer = new THREE.WebGLRenderer( { alpha: true} );
         renderer.setSize( window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.floor(window.devicePixelRatio));
@@ -43,18 +42,15 @@ var loadWorld = function(){
         raycaster = new THREE.Raycaster();
         //Add Objects To the Scene HERE-------------------
 
-        //Sphere------------------
-        // var sphere_geometry = new THREE.SphereGeometry(32,32,32);
-        // // var sphere_material = new THREE.MeshNormalMaterial();
-        // var sphere_material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
-        // sphere = new THREE.Mesh( sphere_geometry, sphere_material );
-
         // Apply VR headset positional data to camera.
         controls = new THREE.VRControls(camera);
 
         // Apply VR stereo rendering to renderer.
         var effect = new THREE.VREffect(renderer);
         effect.setSize(window.innerWidth, window.innerHeight);
+
+        //create gaze interaction manager
+        reticle = vreticle.Reticle(camera);
 
         // Get the VRDisplay and save it for later.
         var vrDisplay = null;
@@ -64,10 +60,12 @@ var loadWorld = function(){
           }
         });
 
-        // scene.add( sphere );
-        // objects.push( sphere ); //if you are interested in detecting an intersection with this sphere
-        // sphere.position.x += 1;
-        // sphere.position.z -= 640;
+        scene.add(camera);
+
+        // Add a floor texture.
+		boxWidth = 1000;
+		var loader = new THREE.TextureLoader();
+		loader.load('/img/floor.png', onTextureLoaded);
 
         //Events------------------------------------------
         document.addEventListener('click', onMouseClick, false );
@@ -84,6 +82,8 @@ var loadWorld = function(){
         document.body.appendChild( container );
 
         initSky();
+        addCubes();
+        GazeAtCubes();
     }
 
     function initSky() {
@@ -158,7 +158,23 @@ var loadWorld = function(){
 			}
 
     function animate(){
-        //if (skybox) {skybox.rotation.y += 0.001;}
+        if (cube1) {cube1.rotation.y += 0.05;}
+		if (cube2) {cube2.rotation.y += 0.05;}
+		if (cube3) {cube3.rotation.y += 0.05;}
+		if (cube4) {cube4.rotation.y += 0.05;}
+		if (cube5) {cube5.rotation.y += 0.05;}
+		if (cube6) {cube6.rotation.y += 0.05;}
+		if (floor) {
+			floor.position.x = 0;
+			floor.position.y = -0.5;
+			floor.position.z = -10;
+
+			floor.rotation.x = Math.PI / 2;
+		}
+
+        //reticle_loop
+        reticle.reticle_loop();
+
         requestAnimationFrame( animate );
         render();
     }
@@ -178,14 +194,29 @@ var loadWorld = function(){
     }
 
     function onMouseClick(){
-        // intersects = calculateIntersects( event );
+        intersects = calculateIntersects( event );
 
-        // if ( intersects.length > 0 ){
-        //     //If object is intersected by mouse pointer, do something
-        //     if (intersects[0].object == sphere){
-        //         alert("This is the sun!");
-        //     }
-        // }
+        if ( intersects.length > 0 ){
+            //If object is intersected by mouse pointer, do something
+            if (intersects[0].object == cube1){
+                alert("This is Cube #1!");
+            }
+            if (intersects[0].object == cube2){
+                alert("This is Cube #2!");
+            }
+            if (intersects[0].object == cube3){
+                alert("This is Cube #3!");
+            }
+            if (intersects[0].object == cube4){
+                alert("This is Cube #4!");
+            }
+            if (intersects[0].object == cube5){
+                alert("This is Cube #5!");
+            }
+            if (intersects[0].object == cube6){
+                alert("This is Cube #6!");
+            }
+        }
     }
     function onMouseDown(){
 
@@ -427,4 +458,132 @@ function enterFullscreen (el) {
   } else if (el.msRequestFullscreen) {
     el.msRequestFullscreen();
   }
+}
+
+function addCubes(){
+
+	var cubeSeparation = 4;
+
+	var geometry = new THREE.BoxGeometry(1,1,1);
+	var material = new THREE.MeshNormalMaterial();
+	cube1 = new THREE.Mesh(geometry, material);
+	cube2 = new THREE.Mesh(geometry, material);
+	cube3 = new THREE.Mesh(geometry, material);
+	cube4 = new THREE.Mesh(geometry, material);
+	cube5 = new THREE.Mesh(geometry, material);
+	cube6 = new THREE.Mesh(geometry, material);
+
+	cube1.position.z = -10;
+	cube2.position.z = -10;
+	cube3.position.z = -10;
+	cube4.position.z = -10;
+	cube5.position.z = -10;
+	cube6.position.z = -10;
+
+	cube1.position.x = -9;
+	cube2.position.x = cube1.position.x + cubeSeparation;
+	cube3.position.x = cube2.position.x + cubeSeparation;
+	cube4.position.x = cube3.position.x + cubeSeparation;
+	cube5.position.x = cube4.position.x + cubeSeparation;
+	cube6.position.x = cube5.position.x + cubeSeparation;
+
+	objects.push( cube1 );
+	objects.push( cube2 );
+	objects.push( cube3 );
+	objects.push( cube4 );
+	objects.push( cube5 );
+	objects.push( cube6 );
+
+    reticle.add_collider(cube1);
+    reticle.add_collider(cube2);
+    reticle.add_collider(cube3);
+    reticle.add_collider(cube4);
+    reticle.add_collider(cube5);
+    reticle.add_collider(cube6);
+
+	scene.add(cube1);
+	scene.add(cube2);
+	scene.add(cube3);
+	scene.add(cube4);
+	scene.add(cube5);
+	scene.add(cube6);
+}
+
+function GazeAtCubes(){
+    cube1.ongazelong = function(){
+        this.material = reticle.get_random_hex_material();
+    }
+    cube1.ongazeover = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube1.ongazeout = function(){
+      this.material = reticle.default_material();
+    }
+
+    cube2.ongazelong = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube2.ongazeover = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube2.ongazeout = function(){
+      this.material = reticle.default_material();
+    }
+
+    cube3.ongazelong = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube3.ongazeover = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube3.ongazeout = function(){
+      this.material = reticle.default_material();
+    }
+
+    cube4.ongazelong = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube4.ongazeover = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube4.ongazeout = function(){
+      this.material = reticle.default_material();
+    }
+
+    cube5.ongazelong = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube5.ongazeover = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube5.ongazeout = function(){
+      this.material = reticle.default_material();
+    }
+
+    cube6.ongazelong = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube6.ongazeover = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube6.ongazeout = function(){
+      this.material = reticle.default_material();
+    }
+}
+
+function onTextureLoaded(texture) {
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(boxWidth/2, boxWidth/2);
+  texture.anisotropy = 16;
+
+  var geometry = new THREE.PlaneGeometry(boxWidth, boxWidth, boxWidth);
+  var material = new THREE.MeshBasicMaterial({
+    map: texture,
+    color: 0xFFFFFF,
+    side: THREE.DoubleSide
+  });
+
+  floor = new THREE.Mesh(geometry, material);
+  scene.add(floor);
 }

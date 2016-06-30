@@ -21,7 +21,7 @@ app.get('/js/client_world.js', function(req, res){
 
 io.on('connection', function(socket){
     console.log('a user connected');
-    var actualSunPos = SunCalc.getPosition(new Date(), 51.5, -0.1);
+    var actualSunPos = SunCalc.getPosition(new Date(), 29.2289, -112.8516);
 
     console.log(actualSunPos);
 
@@ -48,6 +48,10 @@ io.on('connection', function(socket){
         console.log('user disconnected');
         io.emit('removeOtherPlayer', player);
         world.removePlayer( player );
+    });
+
+    socket.on('print', function(){
+        console.log("Long gaze at Cube #1!");
     });
 
 });

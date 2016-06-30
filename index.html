@@ -20,10 +20,15 @@
     <!-- A polyfill for the WebVR API.  -->
     <script src="/js/webvr-polyfill.js"></script>
 
+    <script src="/js/vreticle.js"></script>
+
     <script src="/js/OrbitControls.js"></script>
     <script src="/js/SkyShader.js"></script>
     <script src="/js/Detector.js"></script>
     <script src="/js/dat.gui.min.js"></script>
+
+    <!--  Helps enter and exit VR mode, provides best practices while in VR.  -->
+    <script src="/js/webvr-manager.js"></script>
 
     <script src="/js/client_world.js"></script>
 
@@ -55,6 +60,16 @@
 <body>
 
 <div id="container"></div>
+
+<body>
+
+  <div id="buttons">
+    <button id="fullscreen">Fullscreen</button>
+    <button id="vr">VR (WebVR/Mobile only)</button>
+    <button id="reset">Reset</button>
+  </div>
+
+</body>
 
 <script>
     // Reactions...
