@@ -18,6 +18,9 @@ var distance = 400000;
 var cube1, cube2, cube3, cube4, cube5, cube6;
 var reticle;
 
+var CubeMaterials = [];
+var CubeMaterialsList = [];
+
 var loadWorld = function(){
 
     init();
@@ -127,13 +130,6 @@ var loadWorld = function(){
 					uniforms.mieCoefficient.value = effectController.mieCoefficient;
 					uniforms.mieDirectionalG.value = effectController.mieDirectionalG;
 
-//					var theta = Math.PI * ( effectController.inclination - 0.5 );
-//					var phi = 2 * Math.PI * ( effectController.azimuth - 0.5 );
-//
-//					sunSphere.position.x = distance * Math.cos( phi );
-//					sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
-//					sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
-
 					sunSphere.visible = effectController.sun;
 
 					sky.uniforms.sunPosition.value.copy( sunSphere.position );
@@ -141,18 +137,6 @@ var loadWorld = function(){
 					renderer.render( scene, camera );
 
 				}
-
-//				 var gui = new dat.GUI();
-//
-//				 gui.add( effectController, "turbidity", 1.0, 20.0, 0.1 ).onChange( guiChanged );
-//				 gui.add( effectController, "reileigh", 0.0, 4, 0.001 ).onChange( guiChanged );
-//				 gui.add( effectController, "mieCoefficient", 0.0, 0.1, 0.001 ).onChange( guiChanged );
-//				 gui.add( effectController, "mieDirectionalG", 0.0, 1, 0.001 ).onChange( guiChanged );
-//				 gui.add( effectController, "luminance", 0.0, 2 ).onChange( guiChanged );
-//				 gui.add( effectController, "inclination", 0, 1, 0.0001 ).onChange( guiChanged );
-//				 gui.add( effectController, "azimuth", 0, 1, 0.0001 ).onChange( guiChanged );
-//				 gui.add( effectController, "sun" ).onChange( guiChanged );
-//
 				guiChanged();
 
 			}
@@ -464,14 +448,37 @@ function addCubes(){
 
 	var cubeSeparation = 4;
 
-	var geometry = new THREE.BoxGeometry(1,1,1);
-	var material = new THREE.MeshNormalMaterial();
-	cube1 = new THREE.Mesh(geometry, material);
-	cube2 = new THREE.Mesh(geometry, material);
-	cube3 = new THREE.Mesh(geometry, material);
-	cube4 = new THREE.Mesh(geometry, material);
-	cube5 = new THREE.Mesh(geometry, material);
-	cube6 = new THREE.Mesh(geometry, material);
+	var geometry = new THREE.BoxGeometry(1,1,1,1,1,1);
+	// var material = new THREE.MeshNormalMaterial();
+
+    var materialArray = [];
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/london1.jpg' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/london2.jpg' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/london3.jpg' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/london4.jpg' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/london5.jpg' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/london6.jpg' ) }));
+    CubeMaterialsList.push(new THREE.MeshFaceMaterial(materialArray));
+
+    materialArray = [];
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/moon.png' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/moon.png' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/moon.png' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/moon.png' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/moon.png' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/moon.png' ) }));
+    CubeMaterialsList.push(new THREE.MeshFaceMaterial(materialArray));
+    CubeMaterialsList.push(new THREE.MeshFaceMaterial(materialArray));
+    CubeMaterialsList.push(new THREE.MeshFaceMaterial(materialArray));
+    CubeMaterialsList.push(new THREE.MeshFaceMaterial(materialArray));
+    CubeMaterialsList.push(new THREE.MeshFaceMaterial(materialArray));
+
+	cube1 = new THREE.Mesh(geometry, CubeMaterialsList[0]);
+	cube2 = new THREE.Mesh(geometry, CubeMaterialsList[1]);
+	cube3 = new THREE.Mesh(geometry, CubeMaterialsList[2]);
+	cube4 = new THREE.Mesh(geometry, CubeMaterialsList[3]);
+	cube5 = new THREE.Mesh(geometry, CubeMaterialsList[4]);
+	cube6 = new THREE.Mesh(geometry, CubeMaterialsList[5]);
 
 	cube1.position.z = -10;
 	cube2.position.z = -10;
@@ -518,6 +525,7 @@ function GazeAtCubes(){
     }
     cube1.ongazeout = function(){
       this.material = reticle.default_material();
+      if(CubeMaterialsList[0]) this.material = CubeMaterialsList[0];
     }
 
     cube2.ongazelong = function(){
@@ -528,6 +536,7 @@ function GazeAtCubes(){
     }
     cube2.ongazeout = function(){
       this.material = reticle.default_material();
+      if(CubeMaterialsList[1]) this.material = CubeMaterialsList[1];
     }
 
     cube3.ongazelong = function(){
@@ -538,6 +547,7 @@ function GazeAtCubes(){
     }
     cube3.ongazeout = function(){
       this.material = reticle.default_material();
+      if(CubeMaterialsList[2]) this.material = CubeMaterialsList[2];
     }
 
     cube4.ongazelong = function(){
@@ -548,6 +558,7 @@ function GazeAtCubes(){
     }
     cube4.ongazeout = function(){
       this.material = reticle.default_material();
+      if(CubeMaterialsList[3]) this.material = CubeMaterialsList[3];
     }
 
     cube5.ongazelong = function(){
@@ -558,6 +569,7 @@ function GazeAtCubes(){
     }
     cube5.ongazeout = function(){
       this.material = reticle.default_material();
+      if(CubeMaterialsList[4]) this.material = CubeMaterialsList[4];
     }
 
     cube6.ongazelong = function(){
@@ -568,6 +580,7 @@ function GazeAtCubes(){
     }
     cube6.ongazeout = function(){
       this.material = reticle.default_material();
+      if(CubeMaterialsList[5]) this.material = CubeMaterialsList[5];
     }
 }
 
