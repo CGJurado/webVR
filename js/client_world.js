@@ -20,6 +20,7 @@ var reticle;
 
 var CubeMaterials = [];
 var CubeMaterialsList = [];
+<<<<<<< HEAD
 
 var effectController;
 var uniforms;
@@ -27,6 +28,8 @@ var effect;
 
 var vrDisplay;
 var actualSunPos;
+=======
+>>>>>>> origin/master
 
 var loadWorld = function(){
 
@@ -62,6 +65,17 @@ var loadWorld = function(){
         //create gaze interaction manager
         reticle = vreticle.Reticle(camera);
 
+<<<<<<< HEAD
+=======
+        // Get the VRDisplay and save it for later.
+        var vrDisplay = null;
+        navigator.getVRDisplays().then(function(displays) {
+          if (displays.length > 0) {
+            vrDisplay = displays[0];
+          }
+        });
+
+>>>>>>> origin/master
         scene.add(camera);
 
         // Add a floor texture.
@@ -87,6 +101,7 @@ var loadWorld = function(){
         initSky();
         addCubes();
         GazeAtCubes();
+<<<<<<< HEAD
 
         // Get the VRDisplay and save it for later.
 		vrDisplay = null;
@@ -95,6 +110,8 @@ var loadWorld = function(){
 		    vrDisplay = displays[0];
 		  }
 		});
+=======
+>>>>>>> origin/master
     }
 
     function initSky() {
@@ -129,6 +146,7 @@ var loadWorld = function(){
 
 				// var gui = new dat.GUI();
 
+<<<<<<< HEAD
 				// gui.add( effectController, "turbidity", 1.0, 20.0, 0.1 ).onChange( guiChanged );
 				// gui.add( effectController, "reileigh", 0.0, 4, 0.001 ).onChange( guiChanged );
 				// gui.add( effectController, "mieCoefficient", 0.0, 0.1, 0.001 ).onChange( guiChanged );
@@ -138,6 +156,15 @@ var loadWorld = function(){
 				// gui.add( effectController, "azimuth", 0, 1, 0.0001 ).onChange( guiChanged );
 				// gui.add( effectController, "sun" ).onChange( guiChanged );
 
+=======
+					sunSphere.visible = effectController.sun;
+
+					sky.uniforms.sunPosition.value.copy( sunSphere.position );
+
+					renderer.render( scene, camera );
+
+				}
+>>>>>>> origin/master
 				guiChanged();
 		}
 
@@ -159,6 +186,29 @@ var loadWorld = function(){
         //reticle_loop
         reticle.reticle_loop();
 
+<<<<<<< HEAD
+=======
+			}
+
+    function animate(){
+        if (cube1) {cube1.rotation.y += 0.05;}
+		if (cube2) {cube2.rotation.y += 0.05;}
+		if (cube3) {cube3.rotation.y += 0.05;}
+		if (cube4) {cube4.rotation.y += 0.05;}
+		if (cube5) {cube5.rotation.y += 0.05;}
+		if (cube6) {cube6.rotation.y += 0.05;}
+		if (floor) {
+			floor.position.x = 0;
+			floor.position.y = -0.5;
+			floor.position.z = -10;
+
+			floor.rotation.x = Math.PI / 2;
+		}
+
+        //reticle_loop
+        reticle.reticle_loop();
+
+>>>>>>> origin/master
         requestAnimationFrame( animate );
         render();
     }
@@ -685,6 +735,7 @@ function enterFullscreen (el) {
   }
 }
 
+<<<<<<< HEAD
 function guiChanged() {
 
   uniforms = sky.uniforms;
@@ -731,3 +782,161 @@ var updateSunPosition = function(){
     
     guiChanged();
 };
+=======
+function addCubes(){
+
+	var cubeSeparation = 4;
+
+	var geometry = new THREE.BoxGeometry(1,1,1,1,1,1);
+	// var material = new THREE.MeshNormalMaterial();
+
+    var materialArray = [];
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/london1.jpg' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/london2.jpg' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/london3.jpg' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/london4.jpg' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/london5.jpg' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/london6.jpg' ) }));
+    CubeMaterialsList.push(new THREE.MeshFaceMaterial(materialArray));
+
+    materialArray = [];
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/moon.png' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/moon.png' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/moon.png' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/moon.png' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/moon.png' ) }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/img/moon.png' ) }));
+    CubeMaterialsList.push(new THREE.MeshFaceMaterial(materialArray));
+    CubeMaterialsList.push(new THREE.MeshFaceMaterial(materialArray));
+    CubeMaterialsList.push(new THREE.MeshFaceMaterial(materialArray));
+    CubeMaterialsList.push(new THREE.MeshFaceMaterial(materialArray));
+    CubeMaterialsList.push(new THREE.MeshFaceMaterial(materialArray));
+
+	cube1 = new THREE.Mesh(geometry, CubeMaterialsList[0]);
+	cube2 = new THREE.Mesh(geometry, CubeMaterialsList[1]);
+	cube3 = new THREE.Mesh(geometry, CubeMaterialsList[2]);
+	cube4 = new THREE.Mesh(geometry, CubeMaterialsList[3]);
+	cube5 = new THREE.Mesh(geometry, CubeMaterialsList[4]);
+	cube6 = new THREE.Mesh(geometry, CubeMaterialsList[5]);
+
+	cube1.position.z = -10;
+	cube2.position.z = -10;
+	cube3.position.z = -10;
+	cube4.position.z = -10;
+	cube5.position.z = -10;
+	cube6.position.z = -10;
+
+	cube1.position.x = -9;
+	cube2.position.x = cube1.position.x + cubeSeparation;
+	cube3.position.x = cube2.position.x + cubeSeparation;
+	cube4.position.x = cube3.position.x + cubeSeparation;
+	cube5.position.x = cube4.position.x + cubeSeparation;
+	cube6.position.x = cube5.position.x + cubeSeparation;
+
+	objects.push( cube1 );
+	objects.push( cube2 );
+	objects.push( cube3 );
+	objects.push( cube4 );
+	objects.push( cube5 );
+	objects.push( cube6 );
+
+    reticle.add_collider(cube1);
+    reticle.add_collider(cube2);
+    reticle.add_collider(cube3);
+    reticle.add_collider(cube4);
+    reticle.add_collider(cube5);
+    reticle.add_collider(cube6);
+
+	scene.add(cube1);
+	scene.add(cube2);
+	scene.add(cube3);
+	scene.add(cube4);
+	scene.add(cube5);
+	scene.add(cube6);
+}
+
+function GazeAtCubes(){
+    cube1.ongazelong = function(){
+        this.material = reticle.get_random_hex_material();
+    }
+    cube1.ongazeover = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube1.ongazeout = function(){
+      this.material = reticle.default_material();
+      if(CubeMaterialsList[0]) this.material = CubeMaterialsList[0];
+    }
+
+    cube2.ongazelong = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube2.ongazeover = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube2.ongazeout = function(){
+      this.material = reticle.default_material();
+      if(CubeMaterialsList[1]) this.material = CubeMaterialsList[1];
+    }
+
+    cube3.ongazelong = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube3.ongazeover = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube3.ongazeout = function(){
+      this.material = reticle.default_material();
+      if(CubeMaterialsList[2]) this.material = CubeMaterialsList[2];
+    }
+
+    cube4.ongazelong = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube4.ongazeover = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube4.ongazeout = function(){
+      this.material = reticle.default_material();
+      if(CubeMaterialsList[3]) this.material = CubeMaterialsList[3];
+    }
+
+    cube5.ongazelong = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube5.ongazeover = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube5.ongazeout = function(){
+      this.material = reticle.default_material();
+      if(CubeMaterialsList[4]) this.material = CubeMaterialsList[4];
+    }
+
+    cube6.ongazelong = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube6.ongazeover = function(){
+      this.material = reticle.get_random_hex_material();
+    }
+    cube6.ongazeout = function(){
+      this.material = reticle.default_material();
+      if(CubeMaterialsList[5]) this.material = CubeMaterialsList[5];
+    }
+}
+
+function onTextureLoaded(texture) {
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(boxWidth/2, boxWidth/2);
+  texture.anisotropy = 16;
+
+  var geometry = new THREE.PlaneGeometry(boxWidth, boxWidth, boxWidth);
+  var material = new THREE.MeshBasicMaterial({
+    map: texture,
+    color: 0xFFFFFF,
+    side: THREE.DoubleSide
+  });
+
+  floor = new THREE.Mesh(geometry, material);
+  scene.add(floor);
+}
+>>>>>>> origin/master
