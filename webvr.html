@@ -107,7 +107,7 @@ var effect = new THREE.VREffect(renderer);
 effect.setSize(window.innerWidth, window.innerHeight);
 
 // Add a repeating grid as a skybox.
-var boxWidth = 5;
+var boxWidth = 200;
 var loader = new THREE.TextureLoader();
 loader.load('img/box.png', onTextureLoaded);
 
@@ -197,9 +197,9 @@ navigator.getVRDisplays().then(function(displays) {
 function onTextureLoaded(texture) {
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(boxWidth, boxWidth);
+  texture.repeat.set(1, 1);
 
-  var geometry = new THREE.BoxGeometry(boxWidth, boxWidth, boxWidth);
+  var geometry = new THREE.SphereGeometry(boxWidth, boxWidth, boxWidth);
   var material = new THREE.MeshBasicMaterial({
     map: texture,
     color: 0xFFFFFF,//color: 0x01BE00,
@@ -272,7 +272,6 @@ function onWindowResize() {
 function onVRDisplayPresentChange() {
   console.log('onVRDisplayPresentChange');
   onResize();
-    
 }
     //############################### Nuevas Funciones ##################
     function onKeyDown( event ){

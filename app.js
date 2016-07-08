@@ -6,7 +6,7 @@ var io = require('socket.io')(http);
 var world = require('./js/server_world');
 
 app.get('/', function(req, res){
-    //res.sendFile(__dirname + '/webvr.html');
+    // res.sendFile(__dirname + '/webvr.html');
     res.sendFile(__dirname + '/index.html');
 });
 
@@ -21,7 +21,8 @@ app.get('/js/client_world.js', function(req, res){
 
 io.on('connection', function(socket){
     console.log('a user connected');
-    var actualSunPos = SunCalc.getPosition(new Date(), 51.5, -0.1);
+    var actualSunPos = SunCalc.getPosition(new Date(), 51.5074, -0.1278);
+    // var actualSunPos = SunCalc.getPosition(new Date(), 18.4861, -69.9312);
 
     console.log(actualSunPos);
 
@@ -48,6 +49,10 @@ io.on('connection', function(socket){
         console.log('user disconnected');
         io.emit('removeOtherPlayer', player);
         world.removePlayer( player );
+    });
+
+    socket.on('print', function(){
+        console.log("Long gaze at Cube #1!");
     });
 
 });

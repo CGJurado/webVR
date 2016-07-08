@@ -8,7 +8,6 @@ THREE.VRControls = function ( object, onError ) {
 	var scope = this;
 
 	var vrInput;
-	var pose;
 
 	var standingMatrix = new THREE.Matrix4();
 
@@ -65,7 +64,7 @@ THREE.VRControls = function ( object, onError ) {
 
 			if ( vrInput.getPose ) {
 
-				pose = vrInput.getPose();
+				var pose = vrInput.getPose();
 
 				if ( pose.orientation !== null ) {
 
