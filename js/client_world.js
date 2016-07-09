@@ -70,7 +70,7 @@ var loadWorld = function(){
 		loader.load('/img/floor.png', onTextureLoaded);
 
         //Events------------------------------------------
-        document.addEventListener('click', onMouseClick, false );
+        // document.addEventListener('click', onMouseClick, false );
         document.addEventListener('mousedown', onMouseDown, false);
         document.addEventListener('mouseup', onMouseUp, false);
         document.addEventListener('mousemove', onMouseMove, false);
@@ -127,17 +127,6 @@ var loadWorld = function(){
 					sun: ! true
 				};
 
-				// var gui = new dat.GUI();
-
-				// gui.add( effectController, "turbidity", 1.0, 20.0, 0.1 ).onChange( guiChanged );
-				// gui.add( effectController, "reileigh", 0.0, 4, 0.001 ).onChange( guiChanged );
-				// gui.add( effectController, "mieCoefficient", 0.0, 0.1, 0.001 ).onChange( guiChanged );
-				// gui.add( effectController, "mieDirectionalG", 0.0, 1, 0.001 ).onChange( guiChanged );
-				// gui.add( effectController, "luminance", 0.0, 2 ).onChange( guiChanged );
-				// gui.add( effectController, "inclination", 0, 1, 0.0001 ).onChange( guiChanged );
-				// gui.add( effectController, "azimuth", 0, 1, 0.0001 ).onChange( guiChanged );
-				// gui.add( effectController, "sun" ).onChange( guiChanged );
-
 				guiChanged();
 		}
 
@@ -148,8 +137,10 @@ var loadWorld = function(){
 			if (cube4) {cube4.rotation.y += 0.05;}
 			if (cube5) {cube5.rotation.y += 0.05;}
 			if (cube6) {cube6.rotation.y += 0.05;}
-            
-            
+
+            if (cube1 && cube2 && cube3 && cube4 && cube5 && cube6 && player) {
+                loadCubePositions();
+            }
         	controls.update();
             
             if ( player ){
@@ -174,31 +165,31 @@ var loadWorld = function(){
         renderer.render( scene , camera );
     }
 
-    function onMouseClick(){
-        intersects = calculateIntersects( event );
+    // function onMouseClick(){
+    //     intersects = calculateIntersects( event );
 
-        if ( intersects.length > 0 ){
-            //If object is intersected by mouse pointer, do something
-            if (intersects[0].object == cube1){
-                alert("This is Cube #1!");
-            }
-            if (intersects[0].object == cube2){
-                alert("This is Cube #2!");
-            }
-            if (intersects[0].object == cube3){
-                alert("This is Cube #3!");
-            }
-            if (intersects[0].object == cube4){
-                alert("This is Cube #4!");
-            }
-            if (intersects[0].object == cube5){
-                alert("This is Cube #5!");
-            }
-            if (intersects[0].object == cube6){
-                alert("This is Cube #6!");
-            }
-        }
-    }
+    //     if ( intersects.length > 0 ){
+    //         //If object is intersected by mouse pointer, do something
+    //         if (intersects[0].object == cube1){
+    //             alert("This is Cube #1!");
+    //         }
+    //         if (intersects[0].object == cube2){
+    //             alert("This is Cube #2!");
+    //         }
+    //         if (intersects[0].object == cube3){
+    //             alert("This is Cube #3!");
+    //         }
+    //         if (intersects[0].object == cube4){
+    //             alert("This is Cube #4!");
+    //         }
+    //         if (intersects[0].object == cube5){
+    //             alert("This is Cube #5!");
+    //         }
+    //         if (intersects[0].object == cube6){
+    //             alert("This is Cube #6!");
+    //         }
+    //     }
+    // }
     function onMouseDown(){
 
     }
@@ -325,9 +316,6 @@ var updatePlayerData = function(){
     playerData.r_z = player.rotation.z;
 
     camera.lookAt(player.position);
-//    controls.resetPose();
-    camera.lookAt(player.position);
-//    controls.rotation = player.rotation;
 };
 var checkKeyStates = function(){
 
@@ -383,8 +371,6 @@ var checkKeyStates = function(){
     if (keyState[48]) {
     	// '0'
         camera.lookAt(player.position);
-//	    controls.resetPose();
-	    camera.lookAt(player.position);
     }
     // if (keyState[49]) {
     //     // '1' - Morning
@@ -502,35 +488,7 @@ function addCubes(){
 	cube5 = new THREE.Mesh(geometry, CubeMaterialsList[4]);
 	cube6 = new THREE.Mesh(geometry, CubeMaterialsList[5]);
 
-	var cubeSeparation = 5;
-	var cubeDistance = -6;
-
-	cube1.position.x = -11.5;
-	cube2.position.x = cube1.position.x + cubeSeparation;
-	cube3.position.x = cube2.position.x + cubeSeparation;
-	cube4.position.x = cube3.position.x + cubeSeparation;
-	cube5.position.x = cube4.position.x + cubeSeparation;
-	cube6.position.x = cube5.position.x + cubeSeparation;
-
-	cube1.position.x = cube2.position.x;
-	cube6.position.x = cube5.position.x;
-
-	cube2.position.x += 1.5;
-	cube5.position.x -= 1.5;
-
-	cube1.position.y = cubeSeparation/2;
-	cube2.position.y = cubeSeparation/2;
-	cube3.position.y = cubeSeparation/2;
-	cube4.position.y = cubeSeparation/2;
-	cube5.position.y = cubeSeparation/2;
-	cube6.position.y = cubeSeparation/2;
-
-	cube1.position.z = cubeDistance + 8;
-	cube2.position.z = cubeDistance + 4;
-	cube3.position.z = cubeDistance + 2;
-	cube4.position.z = cubeDistance + 2;
-	cube5.position.z = cubeDistance + 4;
-	cube6.position.z = cubeDistance + 8;
+	loadCubePositions();
 
 	objects.push( cube1 );
 	objects.push( cube2 );
@@ -559,9 +517,11 @@ function GazeAtCubes(){
         this.material = reticle.get_random_hex_material();
         actualSunPos = SunCalc.getPosition(new Date(), 51.5074, -0.1278);
         updateSunPosition();
-        // player.position.x = 1;
-        // player.position.y = 0;
-        // player.position.z = 1;
+        player.position.x = 0;
+        player.position.y = 0;
+        player.position.z = 0;
+        updatePlayerData();
+        socket.emit('updatePosition', playerData);
     }
     cube1.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -575,9 +535,11 @@ function GazeAtCubes(){
       this.material = reticle.get_random_hex_material();
       actualSunPos = SunCalc.getPosition(new Date(), 48.8566, 2.3522);
       updateSunPosition();
-      // player.position.x = 10;
-      // player.position.y = 0;
-      // player.position.z = 10;
+      player.position.x = -20;
+      player.position.y = 0;
+      player.position.z = -20;
+      updatePlayerData();
+        socket.emit('updatePosition', playerData);
     }
     cube2.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -591,6 +553,12 @@ function GazeAtCubes(){
       this.material = reticle.get_random_hex_material();
       actualSunPos = SunCalc.getPosition(new Date(), 35.6895, 139.6917);
       updateSunPosition();
+      player.position.x = -40;
+      player.position.y = 0;
+      player.position.z = -40;
+      updatePlayerData();
+      socket.emit('updatePosition', playerData);
+
     }
     cube3.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -604,6 +572,11 @@ function GazeAtCubes(){
       this.material = reticle.get_random_hex_material();
       actualSunPos = SunCalc.getPosition(new Date(), 38.9637, 35.2433);
       updateSunPosition();
+      player.position.x = -60;
+      player.position.y = 0;
+      player.position.z = -60;
+      updatePlayerData();
+      socket.emit('updatePosition', playerData);
     }
     cube4.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -617,6 +590,11 @@ function GazeAtCubes(){
       this.material = reticle.get_random_hex_material();
       actualSunPos = SunCalc.getPosition(new Date(), 40.7128, -74.0059);
       updateSunPosition();
+      player.position.x = -80;
+      player.position.y = 0;
+      player.position.z = -80;
+      updatePlayerData();
+      socket.emit('updatePosition', playerData);
     }
     cube5.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -630,6 +608,11 @@ function GazeAtCubes(){
       this.material = reticle.get_random_hex_material();
       actualSunPos = SunCalc.getPosition(new Date(), 18.4861, -69.9312);
       updateSunPosition();
+      player.position.x = -100;
+      player.position.y = 0;
+      player.position.z = -100;
+      updatePlayerData();
+      socket.emit('updatePosition', playerData);
     }
     cube6.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -662,6 +645,10 @@ function onTextureLoaded(texture) {
   scene.add(floor);
 }
 
+var controlsResetPose = function(){
+
+    controls.resetPose();
+};
 
 var toggleFullscreen = function(){
 
@@ -713,7 +700,7 @@ function guiChanged() {
 //################################################ new update sun position Function ##############
 var loadSunPosition = function(data){
 
-	actualSunPos = SunCalc.getPosition(new Date(), 51.5074, -0.1278);
+    actualSunPos = data;
 
     effectController.inclination = data.altitude;
     effectController.azimuth = data.azimuth;
@@ -732,3 +719,52 @@ var updateSunPosition = function(){
     
     guiChanged();
 };
+
+var loadCubePositions = function(){
+
+    var cubeSeparation = 5;
+    var cubeDistance = -6;
+
+    cube1.position.x = -12.5;
+    cube2.position.x = cube1.position.x + cubeSeparation;
+    cube3.position.x = cube2.position.x + cubeSeparation;
+    cube4.position.x = cube3.position.x + cubeSeparation;
+    cube5.position.x = cube4.position.x + cubeSeparation;
+    cube6.position.x = cube5.position.x + cubeSeparation;
+
+    cube1.position.x = cube2.position.x;
+    cube6.position.x = cube5.position.x;
+
+    cube2.position.x += 1.5;
+    cube5.position.x -= 1.5;
+
+    cube1.position.y = cubeSeparation/2;
+    cube2.position.y = cubeSeparation/2;
+    cube3.position.y = cubeSeparation/2;
+    cube4.position.y = cubeSeparation/2;
+    cube5.position.y = cubeSeparation/2;
+    cube6.position.y = cubeSeparation/2;
+
+    cube1.position.z = cubeDistance + 8;
+    cube2.position.z = cubeDistance + 4;
+    cube3.position.z = cubeDistance + 2;
+    cube4.position.z = cubeDistance + 2;
+    cube5.position.z = cubeDistance + 4;
+    cube6.position.z = cubeDistance + 8;
+
+    if (cube1 && cube2 && cube3 && cube4 && cube5 && cube6 && player) {
+        cube1.position.x = player.position.x + cube1.position.x;
+        cube2.position.x = player.position.x + cube2.position.x;
+        cube3.position.x = player.position.x + cube3.position.x;
+        cube4.position.x = player.position.x + cube4.position.x;
+        cube5.position.x = player.position.x + cube5.position.x;
+        cube6.position.x = player.position.x + cube6.position.x;
+
+        cube1.position.z = player.position.z + cube1.position.z;
+        cube2.position.z = player.position.z + cube2.position.z;
+        cube3.position.z = player.position.z + cube3.position.z;
+        cube4.position.z = player.position.z + cube4.position.z;
+        cube5.position.z = player.position.z + cube5.position.z;
+        cube6.position.z = player.position.z + cube6.position.z;
+    }
+}

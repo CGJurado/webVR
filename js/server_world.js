@@ -12,9 +12,9 @@ function getRandomColor() {
 function Player(){
 
     this.playerId = players.length;
-    this.x = 1;
+    this.x = 0;
     this.y = 0;
-    this.z = 1;
+    this.z = 0;
     this.r_x = 0;
     this.r_y = 0;
     this.r_z = 0;
