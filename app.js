@@ -6,7 +6,7 @@ var io = require('socket.io')(http);
 var world = require('./js/server_world');
 
 app.get('/', function(req, res){
-    // res.sendFile(__dirname + '/webvr.html');
+//     res.sendFile(__dirname + '/webvr.html');
     res.sendFile(__dirname + '/index.html');
 });
 

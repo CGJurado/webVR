@@ -73,6 +73,11 @@
 </body>
 
 <script>
+//    WebVRConfig = {
+//      BUFFER_SCALE: 0.5,
+////        TOUCH_PANNER_DISABLED: true,
+//        FORCE_ENABLE_VR: true
+//    };
     // Reactions...
     var socket = io();
 
@@ -95,6 +100,7 @@
     socket.on('updateSunPos', function(data){
         loadSunPosition(data);
     });
+    
 
 </script>
 

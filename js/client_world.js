@@ -77,8 +77,8 @@ var loadWorld = function(){
         document.addEventListener('mouseout', onMouseOut, false);
         document.addEventListener('keydown', onKeyDown, false );
         document.addEventListener('keyup', onKeyUp, false );
-        window.addEventListener( 'resize', onWindowResize, false );
-		window.addEventListener('vrdisplaypresentchange', onVRDisplayPresentChange, false);
+        window.addEventListener( 'resize', onResize, false );
+		window.addEventListener('vrdisplaypresentchange', onVRDisplayPresentChange);
 
         //Final touches-----------------------------------
         container.appendChild( renderer.domElement );
@@ -148,13 +148,18 @@ var loadWorld = function(){
 			if (cube4) {cube4.rotation.y += 0.05;}
 			if (cube5) {cube5.rotation.y += 0.05;}
 			if (cube6) {cube6.rotation.y += 0.05;}
-			if (floor) {
-				floor.position.x = 0;
-				floor.position.y = -0.5;
-				floor.position.z = -10;
-
-				floor.rotation.x = Math.PI / 2;
-		}
+            
+            
+        	controls.update();
+            
+            if ( player ){
+//                 camera.lookAt( player.position );
+                updateCameraPosition();
+                checkKeyStates();
+            }
+            
+            // Render the scene.
+            effect.render(scene, camera);
 
         //reticle_loop
         reticle.reticle_loop();
@@ -163,14 +168,9 @@ var loadWorld = function(){
         render();
     }
     function render(){
-        if ( player ){
-        	// camera.lookAt( player.position );
-        	controls.update();
-            updateCameraPosition();
-            checkKeyStates();
-        }
+        
         //Render Scene---------------------------------------
-        renderer.clear();
+//        renderer.clear();
         renderer.render( scene , camera );
     }
 
@@ -325,9 +325,9 @@ var updatePlayerData = function(){
     playerData.r_z = player.rotation.z;
 
     camera.lookAt(player.position);
-    controls.resetPose();
+//    controls.resetPose();
     camera.lookAt(player.position);
-    controls.rotation = player.rotation;
+//    controls.rotation = player.rotation;
 };
 var checkKeyStates = function(){
 
@@ -383,7 +383,7 @@ var checkKeyStates = function(){
     if (keyState[48]) {
     	// '0'
         camera.lookAt(player.position);
-	    controls.resetPose();
+//	    controls.resetPose();
 	    camera.lookAt(player.position);
     }
     // if (keyState[49]) {
@@ -654,13 +654,14 @@ function onTextureLoaded(texture) {
   });
 
   floor = new THREE.Mesh(geometry, material);
+    floor.position.x = 0;
+    floor.position.y = -0.5;
+    floor.position.z = -10;
+
+    floor.rotation.x = Math.PI / 2;
   scene.add(floor);
 }
 
-var controlsResetPose = function(){
-
-    controls.resetPose();
-};
 
 var toggleFullscreen = function(){
 
