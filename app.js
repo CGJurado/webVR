@@ -51,6 +51,16 @@ io.on('connection', function(socket){
         world.removePlayer( player );
     });
 
+    socket.on('checkOverlapPosition', function(xz){
+        for (var i = world.players.length - 1; i >= 0; i--) {
+            if(world.players[i].z == xz || world.players[i].x == xz){
+                console.log('xz = ' + xz + '  i = ' + i);
+                xz += 2;
+                i = world.players.length;
+            }
+            socket.emit('newPlayerXZ', xz);
+        }
+    });
     socket.on('print', function(){
         console.log("Long gaze at Cube #1!");
     });

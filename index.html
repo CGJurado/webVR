@@ -99,6 +99,10 @@
     socket.on('updateSunPos', function(data){
         loadSunPosition(data);
     });
+
+    socket.on('newPlayerXZ', function(data){
+        teleportPlayer(data);
+    });
     
 
 </script>

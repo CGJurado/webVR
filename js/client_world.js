@@ -280,6 +280,8 @@ var createPlayer = function(data){
 
     updateCameraPosition();
 
+    checkOverlapPosition(0);
+
     objects.push( player );
     scene.add( player );
 
@@ -517,11 +519,7 @@ function GazeAtCubes(){
         this.material = reticle.get_random_hex_material();
         actualSunPos = SunCalc.getPosition(new Date(), 51.5074, -0.1278);
         updateSunPosition();
-        player.position.x = 0;
-        player.position.y = 0;
-        player.position.z = 0;
-        updatePlayerData();
-        socket.emit('updatePosition', playerData);
+        checkOverlapPosition(0);
     }
     cube1.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -535,11 +533,7 @@ function GazeAtCubes(){
       this.material = reticle.get_random_hex_material();
       actualSunPos = SunCalc.getPosition(new Date(), 48.8566, 2.3522);
       updateSunPosition();
-      player.position.x = -20;
-      player.position.y = 0;
-      player.position.z = -20;
-      updatePlayerData();
-        socket.emit('updatePosition', playerData);
+      checkOverlapPosition(-20);
     }
     cube2.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -553,11 +547,7 @@ function GazeAtCubes(){
       this.material = reticle.get_random_hex_material();
       actualSunPos = SunCalc.getPosition(new Date(), 35.6895, 139.6917);
       updateSunPosition();
-      player.position.x = -40;
-      player.position.y = 0;
-      player.position.z = -40;
-      updatePlayerData();
-      socket.emit('updatePosition', playerData);
+      checkOverlapPosition(-40);
 
     }
     cube3.ongazeover = function(){
@@ -572,11 +562,7 @@ function GazeAtCubes(){
       this.material = reticle.get_random_hex_material();
       actualSunPos = SunCalc.getPosition(new Date(), 38.9637, 35.2433);
       updateSunPosition();
-      player.position.x = -60;
-      player.position.y = 0;
-      player.position.z = -60;
-      updatePlayerData();
-      socket.emit('updatePosition', playerData);
+      checkOverlapPosition(-60);
     }
     cube4.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -590,11 +576,7 @@ function GazeAtCubes(){
       this.material = reticle.get_random_hex_material();
       actualSunPos = SunCalc.getPosition(new Date(), 40.7128, -74.0059);
       updateSunPosition();
-      player.position.x = -80;
-      player.position.y = 0;
-      player.position.z = -80;
-      updatePlayerData();
-      socket.emit('updatePosition', playerData);
+      checkOverlapPosition(-80);
     }
     cube5.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -608,11 +590,7 @@ function GazeAtCubes(){
       this.material = reticle.get_random_hex_material();
       actualSunPos = SunCalc.getPosition(new Date(), 18.4861, -69.9312);
       updateSunPosition();
-      player.position.x = -100;
-      player.position.y = 0;
-      player.position.z = -100;
-      updatePlayerData();
-      socket.emit('updatePosition', playerData);
+      checkOverlapPosition(-100);
     }
     cube6.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -767,4 +745,15 @@ var loadCubePositions = function(){
         cube5.position.z = player.position.z + cube5.position.z;
         cube6.position.z = player.position.z + cube6.position.z;
     }
-}
+};
+
+var checkOverlapPosition = function(xz){
+    socket.emit('checkOverlapPosition', xz);
+};
+
+var teleportPlayer = function(xz){
+    player.position.x = xz;
+    player.position.z = xz;
+    updatePlayerData();
+    socket.emit('updatePosition', playerData);
+};
