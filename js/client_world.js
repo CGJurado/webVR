@@ -49,6 +49,8 @@ var maxParticleSize = 100;
 var particlesHeight = 40;
 var particleScale = 10;
 
+var cityID;
+
 var loadWorld = function(){
 
     init();
@@ -86,6 +88,15 @@ var loadWorld = function(){
         reticle = vreticle.Reticle(camera);
 
         scene.add(camera);
+        
+        cityID = {
+            santodomingo : 1687725,
+            londres : 2643741,
+            tokyo : 1850147,
+            turquia : 480267,
+            paris : 4125402,
+            nyc : 5128581
+        };
 
         // Add a floor texture.
 		boxWidth = 1000;
@@ -318,7 +329,7 @@ var createPlayer = function(data){
     loadTime();
     loadTimeGeometry(timeText);
 
-    changeWeather();
+    getCurrentWeather(cityID.londres);
 };
 
 var updateCameraPosition = function(){
@@ -560,7 +571,7 @@ function GazeAtCubes(){
             loadTime();
             loadTimeGeometry(timeText);
         }
-        changeWeather();
+        getCurrentWeather(cityID.londres);
     }
     cube1.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -582,7 +593,7 @@ function GazeAtCubes(){
         loadTime();
         loadTimeGeometry(timeText);
       }
-      changeWeather();
+      getCurrentWeather(cityID.paris);
     }
     cube2.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -604,7 +615,7 @@ function GazeAtCubes(){
         loadTime();
         loadTimeGeometry(timeText);
       }
-      changeWeather();
+      getCurrentWeather(cityID.tokyo);
 
     }
     cube3.ongazeover = function(){
@@ -627,7 +638,7 @@ function GazeAtCubes(){
         loadTime();
         loadTimeGeometry(timeText);
       }
-      changeWeather();
+      getCurrentWeather(cityID.turquia);
     }
     cube4.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -649,7 +660,7 @@ function GazeAtCubes(){
         loadTime();
         loadTimeGeometry(timeText);
       }
-      changeWeather();
+      getCurrentWeather(cityID.nyc);
     }
     cube5.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -671,7 +682,7 @@ function GazeAtCubes(){
         loadTime();
         loadTimeGeometry(timeText);
       }
-      changeWeather();
+      getCurrentWeather(cityID.santodomingo);
     }
     cube6.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -1006,47 +1017,96 @@ var animateParticles = function(){
       particles.rotation.x = elapsedSeconds * particleRotationSpeed * particleRotationDirection;
 };
 
-var changeWeather = function(){
-    if (timezone == 1) {
-        particleRotationSpeed = 0.02;
-        maxParticleSize = 100;
-        particlesHeight = 70;
-        particleScale = 100;
-        createParticles(0xA8A8A0);
-    }
-    if (timezone == 2) {
+var changeWeather = function(weather){
+    console.log(weather);
+    if (weather == 'Rain') {
         particleRotationSpeed = 1;
-        maxParticleSize = 50;
-        particlesHeight = 10;
-        particleScale = 10;
-        createParticles(0x80B352);
-    }
-    if (timezone == 3) {
-        particleRotationSpeed = 1;
-        maxParticleSize = 100;
+        maxParticleSize = 10;
         particlesHeight = 0;
-        particleScale = 10;
-        createParticles(0xFFC0CB);
+        particleScale = 5;
+        createParticles(0x0089ff);
     }
-    if (timezone == 4) {
-        particleRotationSpeed = 0.5;
-        maxParticleSize = 100;
-        particlesHeight = 70;
-        particleScale = 10;
-        createParticles(0xFFFF00);
-    }
-    if (timezone == 5) {
+    if (weather == 'Snow') {
         particleRotationSpeed = 0.5;
         maxParticleSize = 20;
         particlesHeight = 0;
         particleScale = 1;
         createParticles(0xFFFFFF);
     }
-    if (timezone == 6) {
+    if (weather == 'Thunderstorm') {
+        particleRotationSpeed = 1;
+        maxParticleSize = 50;
+        particlesHeight = 10;
+        particleScale = 10;
+        createParticles(0x80B352);
+    }
+    if (weather == 'Mist') {
+        particleRotationSpeed = 0.02;
+        maxParticleSize = 100;
+        particlesHeight = 70;
+        particleScale = 100;
+        createParticles(0xA8A8A0);
+    }
+    if (weather == 'Clouds') {
+        particleRotationSpeed = 0.02;
+        maxParticleSize = 100;
+        particlesHeight = 120;
+        particleScale = 100;
+        createParticles(0xA8A8A0);
+    }
+    if (weather == 'Clear sky') {
         particleRotationSpeed = 0.01;
         maxParticleSize = 100;
         particlesHeight = 60;
         particleScale = 100;
         createParticles(0xFF8000);
     }
+    if (weather == 'Few clouds') {
+        particleRotationSpeed = 0.01;
+        maxParticleSize = 100;
+        particlesHeight = 60;
+        particleScale = 100;
+        createParticles(0xFF8000);
+    }
+    if (weather == 'Scattered clouds') {
+        particleRotationSpeed = 0.01;
+        maxParticleSize = 100;
+        particlesHeight = 60;
+        particleScale = 100;
+        createParticles(0xFF8000);
+    }
+    if (weather == 'Broken clouds') {
+        particleRotationSpeed = 0.01;
+        maxParticleSize = 100;
+        particlesHeight = 60;
+        particleScale = 100;
+        createParticles(0xFF8000);
+    }
+    if (weather == 'Shower rain') {
+        particleRotationSpeed = 0.01;
+        maxParticleSize = 100;
+        particlesHeight = 60;
+        particleScale = 100;
+        createParticles(0xFF8000);
+    }
+    
 };
+
+var getCurrentWeather = function(data){
+    
+    var xmlhttp = new XMLHttpRequest();
+    var url = 'http://api.openweathermap.org/data/2.5/weather?id=' + data + '&APPID=ef8b7eb31d34ca064d91c2efb54496ba';
+
+    xmlhttp.onreadystatechange = function(){
+        
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200){
+            var currentWeather = JSON.parse(xmlhttp.responseText);
+            changeWeather(currentWeather.weather[0].main);
+        }
+    };
+
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+    console.log(data);
+};
+
