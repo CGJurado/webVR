@@ -42,6 +42,9 @@ var timezone = 1;
 
 var time = new Date();
 
+var clock = new THREE.Clock();
+var particles;
+
 var loadWorld = function(){
 
     init();
@@ -49,7 +52,7 @@ var loadWorld = function(){
 
     function init(){
 
-        // THREE.Cache.enabled = true;
+        THREE.Cache.enabled = true;
         //Setup------------------------------------------
         container = document.getElementById('container');
 
@@ -166,6 +169,9 @@ var loadWorld = function(){
 
             if (textMesh1) {updateTextPosition();}
             updateTime();
+            if (particles) {
+                animateParticles();
+            }
             
             // Render the scene.
             effect.render(scene, camera);
@@ -307,6 +313,8 @@ var createPlayer = function(data){
     loadTextGeometry("Londres");
     loadTime();
     loadTimeGeometry(timeText);
+
+    createParticles();
 };
 
 var updateCameraPosition = function(){
@@ -544,9 +552,11 @@ function GazeAtCubes(){
         loadTextGeometry("Londres");
         timezone = 1;
         if (timeMesh1) {
+            if (timeMesh1) {scene.remove(timeMesh1)};
             loadTime();
             loadTimeGeometry(timeText);
         }
+        createParticles(0xE50000);
     }
     cube1.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -564,9 +574,11 @@ function GazeAtCubes(){
       loadTextGeometry("Paris");
       timezone = 2;
       if (timeMesh1) {
-          loadTime();
-          loadTimeGeometry(timeText);
+        if (timeMesh1) {scene.remove(timeMesh1)};
+        loadTime();
+        loadTimeGeometry(timeText);
       }
+      createParticles(0x00FFFF);
     }
     cube2.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -584,9 +596,11 @@ function GazeAtCubes(){
       loadTextGeometry("Tokyo");
       timezone = 3;
       if (timeMesh1) {
-          loadTime();
-          loadTimeGeometry(timeText);
+        if (timeMesh1) {scene.remove(timeMesh1)};
+        loadTime();
+        loadTimeGeometry(timeText);
       }
+      createParticles(0x00FF00);
 
     }
     cube3.ongazeover = function(){
@@ -605,9 +619,11 @@ function GazeAtCubes(){
       loadTextGeometry("Turquia");
       timezone = 4;
       if (timeMesh1) {
-          loadTime();
-          loadTimeGeometry(timeText);
+        if (timeMesh1) {scene.remove(timeMesh1)};
+        loadTime();
+        loadTimeGeometry(timeText);
       }
+      createParticles(0xFFFF00);
     }
     cube4.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -625,9 +641,11 @@ function GazeAtCubes(){
       loadTextGeometry("NYC");
       timezone = 5;
       if (timeMesh1) {
-          loadTime();
-          loadTimeGeometry(timeText);
+        if (timeMesh1) {scene.remove(timeMesh1)};
+        loadTime();
+        loadTimeGeometry(timeText);
       }
+      createParticles(0x8562EC);
     }
     cube5.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -645,9 +663,11 @@ function GazeAtCubes(){
       loadTextGeometry("Santo Domingo");
       timezone = 6;
       if (timeMesh1) {
-          loadTime();
-          loadTimeGeometry(timeText);
+        if (timeMesh1) {scene.remove(timeMesh1)};
+        loadTime();
+        loadTimeGeometry(timeText);
       }
+      createParticles(0xFFA500);
     }
     cube6.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -919,6 +939,7 @@ var updateTime = function(){
         updateTimePosition();
         time = new Date();
         if (lastSecond != time.getSeconds()) {
+            if (timeMesh1) {scene.remove(timeMesh1)};
             loadTime();
             loadTimeGeometry(timeText);
         }
@@ -934,4 +955,58 @@ var setTimezoneHour = function(){
     if (timezone == 6) { lastHour; }
 
     if (lastHour >= 24) {lastHour -= 24;}
+};
+
+var createParticles = function(pColor = 0xE50000){
+
+    if (particles) {scene.remove(particles)};
+
+    // Particles
+    particles = new THREE.Object3D(),
+      totalParticles = 50,
+      maxParticleSize = 100,
+      particleRotationSpeed = 0.1,
+      particleRotationDeg = 25,
+      lastColorRange = [0, 0.3],
+      currentColorRange = [0, 0.3],
+
+    clock = new THREE.Clock();
+
+    var particleTexture = THREE.ImageUtils.loadTexture('/img/particle.png'),
+    spriteMaterial = new THREE.SpriteMaterial({
+        map: particleTexture,
+        color: pColor
+    });
+
+    for (var i = 0; i < totalParticles; i++) {
+      var sprite = new THREE.Sprite(spriteMaterial);
+      sprite.scale.set(10, 10, 1.0);
+      sprite.position.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.75);
+      sprite.position.setLength(maxParticleSize * Math.random());
+      sprite.material.blending = THREE.AdditiveBlending;
+              
+      particles.add(sprite);
+    }
+    // particles.position.x = player.position.x;
+    // particles.position.y = player.position.y + 40;
+    // particles.position.z = player.position.z;
+    scene.add(particles);
+};
+
+var animateParticles = function(){
+    particles.position.x = player.position.x;
+    particles.position.y = player.position.y + 40;
+    particles.position.z = player.position.z;
+    var elapsedSeconds = clock.getElapsedTime(),
+      particleRotationDirection = particleRotationDeg <= 180 ? -1 : 1;
+
+      particles.rotation.x = elapsedSeconds * particleRotationSpeed * particleRotationDirection;
+
+      // We check if the color range has changed, if so, we'll change the colours
+      if (lastColorRange[0] != currentColorRange[0] && lastColorRange[1] != currentColorRange[1]) {
+        for (var i = 0; i < totalParticles; i++) {
+          particles.children[i].material.color.setHSL(currentColorRange[0], currentColorRange[1], (Math.random() * (0.7 - 0.2) + 0.2));
+        }
+        lastColorRange = currentColorRange;
+      }
 };

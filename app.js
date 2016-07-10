@@ -37,9 +37,7 @@ io.on('connection', function(socket){
     //     }
     // });
 
-
-
-    console.log(actualSunPos);
+    // console.log(actualSunPos);
 
     var id = socket.id;
     world.addPlayer(id);
@@ -69,17 +67,13 @@ io.on('connection', function(socket){
     socket.on('checkOverlapPosition', function(xz){
         for (var i = world.players.length - 1; i >= 0; i--) {
             if(world.players[i].z == xz || world.players[i].x == xz){
-                console.log('xz = ' + xz + '  i = ' + i);
+                // console.log('xz = ' + xz + '  i = ' + i);
                 xz += 2;
                 i = world.players.length;
             }
             socket.emit('newPlayerXZ', xz);
         }
     });
-    socket.on('print', function(){
-        console.log("Long gaze at Cube #1!");
-    });
-
 });
 
 var port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
