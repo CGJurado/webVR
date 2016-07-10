@@ -1011,7 +1011,7 @@ var createParticles = function(pColor = 0xE50000){
 var animateParticles = function(){
     particles.position.x = player.position.x;
     particles.position.y = player.position.y + particlesHeight;
-    particles.position.z = player.position.z;
+    particles.position.z = player.position.z + 8;
     var elapsedSeconds = clock.getElapsedTime(),
       particleRotationDirection = particleRotationDeg <= 180 ? -1 : 1;
       particles.rotation.x = elapsedSeconds * particleRotationSpeed * particleRotationDirection;
@@ -1020,18 +1020,25 @@ var animateParticles = function(){
 var changeWeather = function(weather){
     console.log(weather);
     if (weather == 'Rain') {
-        particleRotationSpeed = 1;
-        maxParticleSize = 10;
-        particlesHeight = 0;
-        particleScale = 5;
+        particleRotationSpeed = 2;
+        maxParticleSize = 50;
+        particlesHeight = 3;
+        particleScale = 1;
         createParticles(0x0089ff);
     }
     if (weather == 'Snow') {
         particleRotationSpeed = 0.5;
-        maxParticleSize = 20;
-        particlesHeight = 0;
+        maxParticleSize = 30;
+        particlesHeight = 3;
         particleScale = 1;
         createParticles(0xFFFFFF);
+    }
+    if (weather == 'Wind') {
+        particleRotationSpeed = 2.5;
+        maxParticleSize = 100;
+        particlesHeight = 30;
+        particleScale = 10;
+        createParticles(0x80B352);
     }
     if (weather == 'Thunderstorm') {
         particleRotationSpeed = 1;
