@@ -29,7 +29,18 @@ var vrDisplay;
 var actualSunPos;
 
 var textMesh1;
-var centerOffset;
+var centerOffsetText;
+var centerOffsetTime;
+
+var timeText = "";
+var timeMesh1;
+
+var lastSecond;
+var lastHour;
+
+var timezone = 1;
+
+var time = new Date();
 
 var loadWorld = function(){
 
@@ -38,7 +49,7 @@ var loadWorld = function(){
 
     function init(){
 
-        THREE.Cache.enabled = true;
+        // THREE.Cache.enabled = true;
         //Setup------------------------------------------
         container = document.getElementById('container');
 
@@ -149,12 +160,12 @@ var loadWorld = function(){
         	controls.update();
             
             if ( player ){
-//                 camera.lookAt( player.position );
                 updateCameraPosition();
                 checkKeyStates();
             }
 
-            if (textMesh1) {updateTextPosition()}
+            if (textMesh1) {updateTextPosition();}
+            updateTime();
             
             // Render the scene.
             effect.render(scene, camera);
@@ -294,6 +305,8 @@ var createPlayer = function(data){
 
     camera.lookAt( player.position );
     loadTextGeometry("Londres");
+    loadTime();
+    loadTimeGeometry(timeText);
 };
 
 var updateCameraPosition = function(){
@@ -529,6 +542,11 @@ function GazeAtCubes(){
         updateSunPosition();
         checkOverlapPosition(0);
         loadTextGeometry("Londres");
+        timezone = 1;
+        if (timeMesh1) {
+            loadTime();
+            loadTimeGeometry(timeText);
+        }
     }
     cube1.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -544,6 +562,11 @@ function GazeAtCubes(){
       updateSunPosition();
       checkOverlapPosition(-20);
       loadTextGeometry("Paris");
+      timezone = 2;
+      if (timeMesh1) {
+          loadTime();
+          loadTimeGeometry(timeText);
+      }
     }
     cube2.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -559,6 +582,11 @@ function GazeAtCubes(){
       updateSunPosition();
       checkOverlapPosition(-40);
       loadTextGeometry("Tokyo");
+      timezone = 3;
+      if (timeMesh1) {
+          loadTime();
+          loadTimeGeometry(timeText);
+      }
 
     }
     cube3.ongazeover = function(){
@@ -575,6 +603,11 @@ function GazeAtCubes(){
       updateSunPosition();
       checkOverlapPosition(-60);
       loadTextGeometry("Turquia");
+      timezone = 4;
+      if (timeMesh1) {
+          loadTime();
+          loadTimeGeometry(timeText);
+      }
     }
     cube4.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -590,6 +623,11 @@ function GazeAtCubes(){
       updateSunPosition();
       checkOverlapPosition(-80);
       loadTextGeometry("NYC");
+      timezone = 5;
+      if (timeMesh1) {
+          loadTime();
+          loadTimeGeometry(timeText);
+      }
     }
     cube5.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -605,6 +643,11 @@ function GazeAtCubes(){
       updateSunPosition();
       checkOverlapPosition(-100);
       loadTextGeometry("Santo Domingo");
+      timezone = 6;
+      if (timeMesh1) {
+          loadTime();
+          loadTimeGeometry(timeText);
+      }
     }
     cube6.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -798,13 +841,13 @@ var loadTextGeometry = function(text){
           shading: THREE.FlatShading
         });
 
-        centerOffset = -0.5 * ( cityText.boundingBox.max.x - cityText.boundingBox.min.x );
+        centerOffsetText = -0.5 * ( cityText.boundingBox.max.x - cityText.boundingBox.min.x );
 
         textMesh1 = new THREE.Mesh( cityText, material );
 
-        textMesh1.position.x = player.position.x + centerOffset;
-        textMesh1.position.y = 10;
-        textMesh1.position.z = player.position.z - 24;
+        // textMesh1.position.x = player.position.x + centerOffsetText;
+        // textMesh1.position.y = 16;
+        // textMesh1.position.z = player.position.z - 24;
 
         textMesh1.rotation.x = 0;
         textMesh1.rotation.y = Math.PI * 2;
@@ -813,9 +856,82 @@ var loadTextGeometry = function(text){
     });
 };
 
+var loadTimeGeometry = function(text){
+
+    if (timeMesh1) {scene.remove(timeMesh1)};
+
+    var textLoader = new THREE.FontLoader();
+    textLoader.load('/fonts/helvetiker_regular.typeface.js', function (font){
+        var cityText = new THREE.TextGeometry(text, {
+            size: 2.5,
+            height: 1,
+            font: font
+        });
+
+        cityText.computeBoundingBox();
+        cityText.computeVertexNormals();
+
+        var material = new THREE.MeshBasicMaterial({
+          color: 0xE50000,
+          side: THREE.DoubleSide,
+          shading: THREE.FlatShading
+        });
+
+        centerOffsetTime = -0.5 * ( cityText.boundingBox.max.x - cityText.boundingBox.min.x );
+
+        timeMesh1 = new THREE.Mesh( cityText, material );
+
+        // textMesh1.position.x = player.position.x + centerOffsetTime;
+        // textMesh1.position.y = 16;
+        // textMesh1.position.z = player.position.z - 24;
+
+        timeMesh1.rotation.x = 0;
+        timeMesh1.rotation.y = Math.PI * 2;
+
+        scene.add( timeMesh1 );
+    });
+};
+
 var updateTextPosition = function(){
 
-    textMesh1.position.x = player.position.x + centerOffset;
-    textMesh1.position.y = 8;
-    textMesh1.position.z = player.position.z - 20;
+    textMesh1.position.x = player.position.x + centerOffsetText;
+    textMesh1.position.y = 14.5;
+    textMesh1.position.z = player.position.z - 24;
+};
+
+var updateTimePosition = function(){
+
+    timeMesh1.position.x = player.position.x + centerOffsetTime;
+    timeMesh1.position.y = 10.5;
+    timeMesh1.position.z = player.position.z - 24;
+};
+
+var loadTime = function(){
+    time = new Date();
+    lastHour = parseInt(time.getHours());
+    setTimezoneHour();
+    timeText = lastHour + ":" + time.getMinutes() + ":" + time.getSeconds();
+    lastSecond = time.getSeconds();
+};
+
+var updateTime = function(){
+    if (timeMesh1) {
+        updateTimePosition();
+        time = new Date();
+        if (lastSecond != time.getSeconds()) {
+            loadTime();
+            loadTimeGeometry(timeText);
+        }
+    }
+};
+
+var setTimezoneHour = function(){
+    if (timezone == 1) { lastHour += 5; }
+    if (timezone == 2) { lastHour += 6; }
+    if (timezone == 3) { lastHour += 13; }
+    if (timezone == 4) { lastHour += 7; }
+    if (timezone == 5) { lastHour; }
+    if (timezone == 6) { lastHour; }
+
+    if (lastHour >= 24) {lastHour -= 24;}
 };

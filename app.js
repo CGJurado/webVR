@@ -5,6 +5,8 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var world = require('./js/server_world');
 
+var timezonedb = require('timezonedb-node')('W5ZFHNDYGYZ0');
+
 app.get('/', function(req, res){
 //     res.sendFile(__dirname + '/webvr.html');
     res.sendFile(__dirname + '/index.html');
@@ -23,6 +25,19 @@ io.on('connection', function(socket){
     console.log('a user connected');
     var actualSunPos = SunCalc.getPosition(new Date(), 51.5074, -0.1278);
     // var actualSunPos = SunCalc.getPosition(new Date(), 18.4861, -69.9312);
+
+    // timezonedb.getTimeZoneData({
+    // lat: 51.5074,
+    // lng: -0.1278
+    // }, function (error, data) {
+    //     if (!error) {
+    //         console.log(data);
+    //     } else {
+    //         console.error(error);
+    //     }
+    // });
+
+
 
     console.log(actualSunPos);
 
