@@ -28,12 +28,17 @@ var effect;
 var vrDisplay;
 var actualSunPos;
 
+var textMesh1;
+var centerOffset;
+
 var loadWorld = function(){
 
     init();
     animate();
 
     function init(){
+
+        THREE.Cache.enabled = true;
         //Setup------------------------------------------
         container = document.getElementById('container');
 
@@ -148,6 +153,8 @@ var loadWorld = function(){
                 updateCameraPosition();
                 checkKeyStates();
             }
+
+            if (textMesh1) {updateTextPosition()}
             
             // Render the scene.
             effect.render(scene, camera);
@@ -286,6 +293,7 @@ var createPlayer = function(data){
     scene.add( player );
 
     camera.lookAt( player.position );
+    loadTextGeometry("Londres");
 };
 
 var updateCameraPosition = function(){
@@ -520,6 +528,7 @@ function GazeAtCubes(){
         actualSunPos = SunCalc.getPosition(new Date(), 51.5074, -0.1278);
         updateSunPosition();
         checkOverlapPosition(0);
+        loadTextGeometry("Londres");
     }
     cube1.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -534,6 +543,7 @@ function GazeAtCubes(){
       actualSunPos = SunCalc.getPosition(new Date(), 48.8566, 2.3522);
       updateSunPosition();
       checkOverlapPosition(-20);
+      loadTextGeometry("Paris");
     }
     cube2.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -548,6 +558,7 @@ function GazeAtCubes(){
       actualSunPos = SunCalc.getPosition(new Date(), 35.6895, 139.6917);
       updateSunPosition();
       checkOverlapPosition(-40);
+      loadTextGeometry("Tokyo");
 
     }
     cube3.ongazeover = function(){
@@ -563,6 +574,7 @@ function GazeAtCubes(){
       actualSunPos = SunCalc.getPosition(new Date(), 38.9637, 35.2433);
       updateSunPosition();
       checkOverlapPosition(-60);
+      loadTextGeometry("Turquia");
     }
     cube4.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -577,6 +589,7 @@ function GazeAtCubes(){
       actualSunPos = SunCalc.getPosition(new Date(), 40.7128, -74.0059);
       updateSunPosition();
       checkOverlapPosition(-80);
+      loadTextGeometry("NYC");
     }
     cube5.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -591,6 +604,7 @@ function GazeAtCubes(){
       actualSunPos = SunCalc.getPosition(new Date(), 18.4861, -69.9312);
       updateSunPosition();
       checkOverlapPosition(-100);
+      loadTextGeometry("Santo Domingo");
     }
     cube6.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -756,4 +770,52 @@ var teleportPlayer = function(xz){
     player.position.z = xz;
     updatePlayerData();
     socket.emit('updatePosition', playerData);
+};
+
+var loadTextGeometry = function(text){
+
+    if (textMesh1) {scene.remove(textMesh1)};
+
+    var textLoader = new THREE.FontLoader();
+    textLoader.load('/fonts/helvetiker_regular.typeface.js', function (font){
+        var cityText = new THREE.TextGeometry(text, {
+            size: 4,
+            height: 1,
+            font: font
+        });
+
+        cityText.computeBoundingBox();
+        cityText.computeVertexNormals();
+
+        // material = new THREE.MultiMaterial( [
+        //     new THREE.MeshPhongMaterial( { color: 0xffffff, shading: THREE.FlatShading } ), // front
+        //     new THREE.MeshPhongMaterial( { color: 0xffffff, shading: THREE.SmoothShading } ) // side
+        // ] );
+
+        var material = new THREE.MeshBasicMaterial({
+          color: 0xE50000,
+          side: THREE.DoubleSide,
+          shading: THREE.FlatShading
+        });
+
+        centerOffset = -0.5 * ( cityText.boundingBox.max.x - cityText.boundingBox.min.x );
+
+        textMesh1 = new THREE.Mesh( cityText, material );
+
+        textMesh1.position.x = player.position.x + centerOffset;
+        textMesh1.position.y = 10;
+        textMesh1.position.z = player.position.z - 24;
+
+        textMesh1.rotation.x = 0;
+        textMesh1.rotation.y = Math.PI * 2;
+
+        scene.add( textMesh1 );
+    });
+};
+
+var updateTextPosition = function(){
+
+    textMesh1.position.x = player.position.x + centerOffset;
+    textMesh1.position.y = 8;
+    textMesh1.position.z = player.position.z - 20;
 };
