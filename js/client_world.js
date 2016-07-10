@@ -44,6 +44,10 @@ var time = new Date();
 
 var clock = new THREE.Clock();
 var particles;
+var particleRotationSpeed = 0.05;
+var maxParticleSize = 100;
+var particlesHeight = 40;
+var particleScale = 10;
 
 var loadWorld = function(){
 
@@ -314,7 +318,7 @@ var createPlayer = function(data){
     loadTime();
     loadTimeGeometry(timeText);
 
-    createParticles();
+    changeWeather();
 };
 
 var updateCameraPosition = function(){
@@ -556,7 +560,7 @@ function GazeAtCubes(){
             loadTime();
             loadTimeGeometry(timeText);
         }
-        createParticles(0xE50000);
+        changeWeather();
     }
     cube1.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -578,7 +582,7 @@ function GazeAtCubes(){
         loadTime();
         loadTimeGeometry(timeText);
       }
-      createParticles(0x00FFFF);
+      changeWeather();
     }
     cube2.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -600,7 +604,7 @@ function GazeAtCubes(){
         loadTime();
         loadTimeGeometry(timeText);
       }
-      createParticles(0x00FF00);
+      changeWeather();
 
     }
     cube3.ongazeover = function(){
@@ -623,7 +627,7 @@ function GazeAtCubes(){
         loadTime();
         loadTimeGeometry(timeText);
       }
-      createParticles(0xFFFF00);
+      changeWeather();
     }
     cube4.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -645,7 +649,7 @@ function GazeAtCubes(){
         loadTime();
         loadTimeGeometry(timeText);
       }
-      createParticles(0x8562EC);
+      changeWeather();
     }
     cube5.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -667,7 +671,7 @@ function GazeAtCubes(){
         loadTime();
         loadTimeGeometry(timeText);
       }
-      createParticles(0xFFA500);
+      changeWeather();
     }
     cube6.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -964,9 +968,9 @@ var createParticles = function(pColor = 0xE50000){
     // Particles
     particles = new THREE.Object3D(),
       totalParticles = 50,
-      maxParticleSize = 100,
-      particleRotationSpeed = 0.1,
-      particleRotationDeg = 25,
+      maxParticleSize = maxParticleSize,
+      particleRotationSpeed = particleRotationSpeed,
+      particleRotationDeg = 0,
       lastColorRange = [0, 0.3],
       currentColorRange = [0, 0.3],
 
@@ -980,7 +984,7 @@ var createParticles = function(pColor = 0xE50000){
 
     for (var i = 0; i < totalParticles; i++) {
       var sprite = new THREE.Sprite(spriteMaterial);
-      sprite.scale.set(10, 10, 1.0);
+      sprite.scale.set(particleScale, particleScale, 1.0);
       sprite.position.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.75);
       sprite.position.setLength(maxParticleSize * Math.random());
       sprite.material.blending = THREE.AdditiveBlending;
@@ -995,18 +999,54 @@ var createParticles = function(pColor = 0xE50000){
 
 var animateParticles = function(){
     particles.position.x = player.position.x;
-    particles.position.y = player.position.y + 40;
+    particles.position.y = player.position.y + particlesHeight;
     particles.position.z = player.position.z;
     var elapsedSeconds = clock.getElapsedTime(),
       particleRotationDirection = particleRotationDeg <= 180 ? -1 : 1;
-
       particles.rotation.x = elapsedSeconds * particleRotationSpeed * particleRotationDirection;
+};
 
-      // We check if the color range has changed, if so, we'll change the colours
-      if (lastColorRange[0] != currentColorRange[0] && lastColorRange[1] != currentColorRange[1]) {
-        for (var i = 0; i < totalParticles; i++) {
-          particles.children[i].material.color.setHSL(currentColorRange[0], currentColorRange[1], (Math.random() * (0.7 - 0.2) + 0.2));
-        }
-        lastColorRange = currentColorRange;
-      }
+var changeWeather = function(){
+    if (timezone == 1) {
+        particleRotationSpeed = 0.02;
+        maxParticleSize = 100;
+        particlesHeight = 70;
+        particleScale = 100;
+        createParticles(0xA8A8A0);
+    }
+    if (timezone == 2) {
+        particleRotationSpeed = 1;
+        maxParticleSize = 50;
+        particlesHeight = 10;
+        particleScale = 10;
+        createParticles(0x80B352);
+    }
+    if (timezone == 3) {
+        particleRotationSpeed = 1;
+        maxParticleSize = 100;
+        particlesHeight = 0;
+        particleScale = 10;
+        createParticles(0xFFC0CB);
+    }
+    if (timezone == 4) {
+        particleRotationSpeed = 0.5;
+        maxParticleSize = 100;
+        particlesHeight = 70;
+        particleScale = 10;
+        createParticles(0xFFFF00);
+    }
+    if (timezone == 5) {
+        particleRotationSpeed = 0.5;
+        maxParticleSize = 20;
+        particlesHeight = 0;
+        particleScale = 1;
+        createParticles(0xFFFFFF);
+    }
+    if (timezone == 6) {
+        particleRotationSpeed = 0.01;
+        maxParticleSize = 100;
+        particlesHeight = 60;
+        particleScale = 100;
+        createParticles(0xFF8000);
+    }
 };
