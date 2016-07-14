@@ -960,6 +960,7 @@ var updateTimePosition = function(){
 };
 
 var loadTime = function(){
+	if (timeMesh1) {scene.remove(timeMesh1)};
     time = new Date();
     lastHour = parseInt(time.getHours());
     setcurrentCityHour();
@@ -1081,7 +1082,7 @@ var changeWeather = function(weather){
         particleRotationSpeed = 0;
         maxParticleSize = 500;
         particlesHeight = 200;
-        particleScale = 500;
+        particleScale = 350;
         totalParticles = 30;
         createParticles(0x59616d);
     }
