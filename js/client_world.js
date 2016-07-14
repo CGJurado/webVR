@@ -1080,10 +1080,10 @@ var changeWeather = function(weather){
     }
     if (weather == 'Clouds') {
         particleRotationSpeed = 0;
-        maxParticleSize = 500;
-        particlesHeight = 200;
-        particleScale = 350;
-        totalParticles = 30;
+        maxParticleSize = 600;
+        particlesHeight = 220;
+        particleScale = 700;
+        totalParticles = 10;
         createParticles(0x59616d);
     }
     if (weather == 'Clear') {
