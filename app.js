@@ -42,6 +42,8 @@ io.on('connection', function(socket){
     var id = socket.id;
     world.addPlayer(id);
 
+    console.log("Number of players = " + world.players.length);
+
     var player = world.playerForId(id);
     socket.emit('createPlayer', player);
     socket.emit('updateSunPos', actualSunPos);
@@ -62,6 +64,7 @@ io.on('connection', function(socket){
         console.log('user disconnected');
         io.emit('removeOtherPlayer', player);
         world.removePlayer( player );
+        console.log("Number of players = " + world.players.length);
     });
 
     socket.on('checkOverlapPosition', function(xz){
