@@ -21,6 +21,8 @@ var reticle;
 var CubeMaterials = [];
 var CubeMaterialsList = [];
 
+var floorTextures = [];
+
 var effectController;
 var uniforms;
 var effect;
@@ -102,8 +104,7 @@ var loadWorld = function(){
 
         // Add a floor texture.
 		boxWidth = 1000;
-		var loader = new THREE.TextureLoader();
-		loader.load('/img/floor.png', onTextureLoaded);
+        createFloor();
 
         //Events------------------------------------------
         // document.addEventListener('click', onMouseClick, false );
@@ -601,7 +602,7 @@ function GazeAtCubes(){
     	      loadTimeGeometry(timeText);
     	    }
     	    getCurrentWeather(cityID.paris);
-    	    changeFloorTexture('/img/floor2.png');
+    	    changeFloorTexture(currentCity);
     	}
     }
     cube2.ongazeover = function(){
@@ -626,7 +627,7 @@ function GazeAtCubes(){
     	      loadTimeGeometry(timeText);
     	    }
     	    getCurrentWeather(cityID.tokyo);
-    	    changeFloorTexture();
+    	    changeFloorTexture(currentCity);
     	}
     }
     cube3.ongazeover = function(){
@@ -651,7 +652,7 @@ function GazeAtCubes(){
     	      loadTimeGeometry(timeText);
     	    }
     	    getCurrentWeather(cityID.turquia);
-    	    changeFloorTexture();
+    	    changeFloorTexture(currentCity);
     	}
     }
     cube4.ongazeover = function(){
@@ -676,7 +677,7 @@ function GazeAtCubes(){
     	      loadTimeGeometry(timeText);
     	    }
     	    getCurrentWeather(cityID.nyc);
-    	    changeFloorTexture();
+    	    changeFloorTexture(currentCity);
     	}
     }
     cube5.ongazeover = function(){
@@ -701,7 +702,7 @@ function GazeAtCubes(){
     	      loadTimeGeometry(timeText);
     	    }
     	    getCurrentWeather(cityID.santodomingo);
-    	    changeFloorTexture();
+    	    changeFloorTexture(currentCity);
     	}
     }
     cube6.ongazeover = function(){
@@ -713,15 +714,10 @@ function GazeAtCubes(){
     }
 }
 
-function onTextureLoaded(texture) {
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(boxWidth/2, boxWidth/2);
-  texture.anisotropy = 16;
+function createFloor(texture) {
 
   var geometry = new THREE.PlaneGeometry(boxWidth, boxWidth, boxWidth);
   var material = new THREE.MeshBasicMaterial({
-    map: texture,
     color: 0xFFFFFF,
     side: THREE.DoubleSide
   });
@@ -733,6 +729,8 @@ function onTextureLoaded(texture) {
 
     floor.rotation.x = Math.PI / 2;
   scene.add(floor);
+  loadFloorTextures();
+  changeFloorTexture();
 }
 
 var controlsResetPose = function(){
@@ -1156,11 +1154,26 @@ var getCurrentWeather = function(data){
     console.log(data);
 };
 
-var changeFloorTexture = function(path = '/img/floor.png'){
-	var texture = THREE.ImageUtils.loadTexture(path);
-	texture.wrapS = THREE.RepeatWrapping;
-	texture.wrapT = THREE.RepeatWrapping;
-	texture.repeat.set(300, 300);
-	texture.anisotropy = 16;
-	floor.material.map = texture;
+var loadFloorTextures = function(){
+    floorTextures = [];
+    floorTextures.push(THREE.ImageUtils.loadTexture('/img/floor1.png'));
+    floorTextures.push(THREE.ImageUtils.loadTexture('/img/floor2.png'));
+    floorTextures.push(THREE.ImageUtils.loadTexture('/img/floor3.png'));
+    floorTextures.push(THREE.ImageUtils.loadTexture('/img/floor4.png'));
+    floorTextures.push(THREE.ImageUtils.loadTexture('/img/floor5.png'));
+    floorTextures.push(THREE.ImageUtils.loadTexture('/img/floor6.png'));
+}
+
+var changeFloorTexture = function(num = 1){
+    num -= 1;
+    if (num < 0) {num = 0};
+    if (floor) {
+        floor.color = 0x000000;
+        floorTextures[num].wrapS = THREE.RepeatWrapping;
+        floorTextures[num].wrapT = THREE.RepeatWrapping;
+        floorTextures[num].repeat.set(300, 300);
+        floorTextures[num].anisotropy = 16;
+        floor.material.map = floorTextures[num];
+        floor.color = 0xFFFFFF;
+    }
 }
