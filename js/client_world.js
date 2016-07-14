@@ -38,7 +38,7 @@ var timeMesh1;
 var lastSecond;
 var lastHour;
 
-var timezone = 1;
+var currentCity = 1;
 
 var time = new Date();
 
@@ -48,6 +48,8 @@ var particleRotationSpeed = 0.05;
 var maxParticleSize = 100;
 var particlesHeight = 40;
 var particleScale = 10;
+
+var cubeRotation = 0.025;
 
 var cityID;
 
@@ -165,15 +167,16 @@ var loadWorld = function(){
 		}
 
 	    function animate(){
-	        if (cube1) {cube1.rotation.y += 0.05;}
-			if (cube2) {cube2.rotation.y += 0.05;}
-			if (cube3) {cube3.rotation.y += 0.05;}
-			if (cube4) {cube4.rotation.y += 0.05;}
-			if (cube5) {cube5.rotation.y += 0.05;}
-			if (cube6) {cube6.rotation.y += 0.05;}
+	        if (cube1) {cube1.rotation.y += cubeRotation;}
+			if (cube2) {cube2.rotation.y += cubeRotation;}
+			if (cube3) {cube3.rotation.y += cubeRotation;}
+			if (cube4) {cube4.rotation.y += cubeRotation;}
+			if (cube5) {cube5.rotation.y += cubeRotation;}
+			if (cube6) {cube6.rotation.y += cubeRotation;}
 
             if (cube1 && cube2 && cube3 && cube4 && cube5 && cube6 && player) {
                 loadCubePositions();
+                cube6.rotation.y = cube5.rotation.y = cube4.rotation.y = cube3.rotation.y = cube2.rotation.y = cube1.rotation.y;
             }
         	controls.update();
             
@@ -560,18 +563,21 @@ function addCubes(){
 
 function GazeAtCubes(){
     cube1.ongazelong = function(){
-        this.material = reticle.get_random_hex_material();
-        actualSunPos = SunCalc.getPosition(new Date(), 51.5074, -0.1278);
-        updateSunPosition();
-        checkOverlapPosition(0);
-        loadTextGeometry("Londres");
-        timezone = 1;
-        if (timeMesh1) {
-            if (timeMesh1) {scene.remove(timeMesh1)};
-            loadTime();
-            loadTimeGeometry(timeText);
-        }
-        getCurrentWeather(cityID.londres);
+    	if (currentCity != 1) {
+	        this.material = reticle.get_random_hex_material();
+	        actualSunPos = SunCalc.getPosition(new Date(), 51.5074, -0.1278);
+	        updateSunPosition();
+	        checkOverlapPosition(0);
+	        loadTextGeometry("Londres");
+	        currentCity = 1;
+	        if (timeMesh1) {
+	            if (timeMesh1) {scene.remove(timeMesh1)};
+	            loadTime();
+	            loadTimeGeometry(timeText);
+	        }
+	        getCurrentWeather(cityID.londres);
+	        changeFloorTexture();
+	    }
     }
     cube1.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -582,18 +588,21 @@ function GazeAtCubes(){
     }
 
     cube2.ongazelong = function(){
-      this.material = reticle.get_random_hex_material();
-      actualSunPos = SunCalc.getPosition(new Date(), 48.8566, 2.3522);
-      updateSunPosition();
-      checkOverlapPosition(-20);
-      loadTextGeometry("Paris");
-      timezone = 2;
-      if (timeMesh1) {
-        if (timeMesh1) {scene.remove(timeMesh1)};
-        loadTime();
-        loadTimeGeometry(timeText);
-      }
-      getCurrentWeather(cityID.paris);
+    	if (currentCity != 2) {
+    	    this.material = reticle.get_random_hex_material();
+    	    actualSunPos = SunCalc.getPosition(new Date(), 48.8566, 2.3522);
+    	    updateSunPosition();
+    	    checkOverlapPosition(-20);
+    	    loadTextGeometry("Paris");
+    	    currentCity = 2;
+    	    if (timeMesh1) {
+    	      if (timeMesh1) {scene.remove(timeMesh1)};
+    	      loadTime();
+    	      loadTimeGeometry(timeText);
+    	    }
+    	    getCurrentWeather(cityID.paris);
+    	    changeFloorTexture('/img/floor2.png');
+    	}
     }
     cube2.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -604,19 +613,21 @@ function GazeAtCubes(){
     }
 
     cube3.ongazelong = function(){
-      this.material = reticle.get_random_hex_material();
-      actualSunPos = SunCalc.getPosition(new Date(), 35.6895, 139.6917);
-      updateSunPosition();
-      checkOverlapPosition(-40);
-      loadTextGeometry("Tokyo");
-      timezone = 3;
-      if (timeMesh1) {
-        if (timeMesh1) {scene.remove(timeMesh1)};
-        loadTime();
-        loadTimeGeometry(timeText);
-      }
-      getCurrentWeather(cityID.tokyo);
-
+    	if (currentCity != 3) {
+    	    this.material = reticle.get_random_hex_material();
+    	    actualSunPos = SunCalc.getPosition(new Date(), 35.6895, 139.6917);
+    	    updateSunPosition();
+    	    checkOverlapPosition(-40);
+    	    loadTextGeometry("Tokyo");
+    	    currentCity = 3;
+    	    if (timeMesh1) {
+    	      if (timeMesh1) {scene.remove(timeMesh1)};
+    	      loadTime();
+    	      loadTimeGeometry(timeText);
+    	    }
+    	    getCurrentWeather(cityID.tokyo);
+    	    changeFloorTexture();
+    	}
     }
     cube3.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -627,18 +638,21 @@ function GazeAtCubes(){
     }
 
     cube4.ongazelong = function(){
-      this.material = reticle.get_random_hex_material();
-      actualSunPos = SunCalc.getPosition(new Date(), 38.9637, 35.2433);
-      updateSunPosition();
-      checkOverlapPosition(-60);
-      loadTextGeometry("Turquia");
-      timezone = 4;
-      if (timeMesh1) {
-        if (timeMesh1) {scene.remove(timeMesh1)};
-        loadTime();
-        loadTimeGeometry(timeText);
-      }
-      getCurrentWeather(cityID.turquia);
+    	if (currentCity != 4) {
+    	    this.material = reticle.get_random_hex_material();
+    	    actualSunPos = SunCalc.getPosition(new Date(), 38.9637, 35.2433);
+    	    updateSunPosition();
+    	    checkOverlapPosition(-60);
+    	    loadTextGeometry("Turquia");
+    	    currentCity = 4;
+    	    if (timeMesh1) {
+    	      if (timeMesh1) {scene.remove(timeMesh1)};
+    	      loadTime();
+    	      loadTimeGeometry(timeText);
+    	    }
+    	    getCurrentWeather(cityID.turquia);
+    	    changeFloorTexture();
+    	}
     }
     cube4.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -649,18 +663,21 @@ function GazeAtCubes(){
     }
 
     cube5.ongazelong = function(){
-      this.material = reticle.get_random_hex_material();
-      actualSunPos = SunCalc.getPosition(new Date(), 40.7128, -74.0059);
-      updateSunPosition();
-      checkOverlapPosition(-80);
-      loadTextGeometry("NYC");
-      timezone = 5;
-      if (timeMesh1) {
-        if (timeMesh1) {scene.remove(timeMesh1)};
-        loadTime();
-        loadTimeGeometry(timeText);
-      }
-      getCurrentWeather(cityID.nyc);
+    	if (currentCity != 5) {
+    	    this.material = reticle.get_random_hex_material();
+    	    actualSunPos = SunCalc.getPosition(new Date(), 40.7128, -74.0059);
+    	    updateSunPosition();
+    	    checkOverlapPosition(-80);
+    	    loadTextGeometry("NYC");
+    	    currentCity = 5;
+    	    if (timeMesh1) {
+    	      if (timeMesh1) {scene.remove(timeMesh1)};
+    	      loadTime();
+    	      loadTimeGeometry(timeText);
+    	    }
+    	    getCurrentWeather(cityID.nyc);
+    	    changeFloorTexture();
+    	}
     }
     cube5.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -671,18 +688,21 @@ function GazeAtCubes(){
     }
 
     cube6.ongazelong = function(){
-      this.material = reticle.get_random_hex_material();
-      actualSunPos = SunCalc.getPosition(new Date(), 18.4861, -69.9312);
-      updateSunPosition();
-      checkOverlapPosition(-100);
-      loadTextGeometry("Santo Domingo");
-      timezone = 6;
-      if (timeMesh1) {
-        if (timeMesh1) {scene.remove(timeMesh1)};
-        loadTime();
-        loadTimeGeometry(timeText);
-      }
-      getCurrentWeather(cityID.santodomingo);
+    	if (currentCity != 6) {
+    	    this.material = reticle.get_random_hex_material();
+    	    actualSunPos = SunCalc.getPosition(new Date(), 18.4861, -69.9312);
+    	    updateSunPosition();
+    	    checkOverlapPosition(-100);
+    	    loadTextGeometry("Santo Domingo");
+    	    currentCity = 6;
+    	    if (timeMesh1) {
+    	      if (timeMesh1) {scene.remove(timeMesh1)};
+    	      loadTime();
+    	      loadTimeGeometry(timeText);
+    	    }
+    	    getCurrentWeather(cityID.santodomingo);
+    	    changeFloorTexture();
+    	}
     }
     cube6.ongazeover = function(){
       this.material = reticle.get_random_hex_material();
@@ -944,7 +964,7 @@ var updateTimePosition = function(){
 var loadTime = function(){
     time = new Date();
     lastHour = parseInt(time.getHours());
-    setTimezoneHour();
+    setcurrentCityHour();
     timeText = lastHour + ":" + time.getMinutes() + ":" + time.getSeconds();
     lastSecond = time.getSeconds();
 };
@@ -961,13 +981,13 @@ var updateTime = function(){
     }
 };
 
-var setTimezoneHour = function(){
-    if (timezone == 1) { lastHour += 5; }
-    if (timezone == 2) { lastHour += 6; }
-    if (timezone == 3) { lastHour += 13; }
-    if (timezone == 4) { lastHour += 7; }
-    if (timezone == 5) { lastHour; }
-    if (timezone == 6) { lastHour; }
+var setcurrentCityHour = function(){
+    if (currentCity == 1) { lastHour += 5; }
+    if (currentCity == 2) { lastHour += 6; }
+    if (currentCity == 3) { lastHour += 13; }
+    if (currentCity == 4) { lastHour += 7; }
+    if (currentCity == 5) { lastHour; }
+    if (currentCity == 6) { lastHour; }
 
     if (lastHour >= 24) {lastHour -= 24;}
 };
@@ -1117,3 +1137,11 @@ var getCurrentWeather = function(data){
     console.log(data);
 };
 
+var changeFloorTexture = function(path = '/img/floor.png'){
+	var texture = THREE.ImageUtils.loadTexture(path);
+	texture.wrapS = THREE.RepeatWrapping;
+	texture.wrapT = THREE.RepeatWrapping;
+	texture.repeat.set(300, 300);
+	texture.anisotropy = 16;
+	floor.material.map = texture;
+}
