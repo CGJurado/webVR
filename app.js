@@ -77,6 +77,11 @@ io.on('connection', function(socket){
             socket.emit('newPlayerXZ', xz);
         }
     });
+
+    socket.on('playerLocation', function(currentCity){
+        var cities = [ "London", "Paris", "Tokyo", "Turkey", "NYC", "Santo Domingo" ];
+        console.log("Player " + socket.id + " is in " + cities[currentCity-1]);
+    });
 });
 
 var port = process.env.OPENSHIFT_NODEJS_PORT || 8080;

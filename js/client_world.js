@@ -1177,4 +1177,5 @@ var changeFloorTexture = function(num = 1){
         floor.material.map = floorTextures[num];
         floor.color = 0xFFFFFF;
     }
+    socket.emit('playerLocation', currentCity);
 }
