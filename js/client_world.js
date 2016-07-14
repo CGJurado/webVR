@@ -992,13 +992,13 @@ var setcurrentCityHour = function(){
     if (lastHour >= 24) {lastHour -= 24;}
 };
 
-var createParticles = function(pColor = 0xE50000){
+var createParticles = function(pColor){
 
     if (particles) {scene.remove(particles)};
 
     // Particles
     particles = new THREE.Object3D(),
-      totalParticles = 50,
+      totalParticles = totalParticles,
       maxParticleSize = maxParticleSize,
       particleRotationSpeed = particleRotationSpeed,
       particleRotationDeg = 0,
@@ -1041,9 +1041,10 @@ var changeWeather = function(weather){
     console.log(weather);
     if (weather == 'Rain') {
         particleRotationSpeed = 2;
-        maxParticleSize = 50;
+        maxParticleSize = 200;
         particlesHeight = 3;
         particleScale = 1;
+        totalParticles = 500;
         createParticles(0x0089ff);
     }
     if (weather == 'Snow') {
@@ -1051,6 +1052,7 @@ var changeWeather = function(weather){
         maxParticleSize = 30;
         particlesHeight = 3;
         particleScale = 1;
+        totalParticles = 80;
         createParticles(0xFFFFFF);
     }
     if (weather == 'Wind') {
@@ -1058,34 +1060,47 @@ var changeWeather = function(weather){
         maxParticleSize = 100;
         particlesHeight = 30;
         particleScale = 10;
+        totalParticles = 50;
         createParticles(0x80B352);
     }
     if (weather == 'Thunderstorm') {
         particleRotationSpeed = 1;
         maxParticleSize = 50;
-        particlesHeight = 10;
-        particleScale = 10;
-        createParticles(0x80B352);
+        particlesHeight = 2;
+        particleScale = 100;
+        totalParticles = 2;
+        createParticles(0xcbcb37);
     }
     if (weather == 'Mist') {
         particleRotationSpeed = 0.02;
         maxParticleSize = 100;
         particlesHeight = 70;
-        particleScale = 100;
-        createParticles(0xA8A8A0);
+        particleScale = 200;
+        totalParticles = 20;
+        createParticles(0x535a60);
     }
     if (weather == 'Clouds') {
+        particleRotationSpeed = 0;
+        maxParticleSize = 500;
+        particlesHeight = 200;
+        particleScale = 500;
+        totalParticles = 30;
+        createParticles(0x59616d);
+    }
+    if (weather == 'Clear') {
         particleRotationSpeed = 0.02;
-        maxParticleSize = 100;
-        particlesHeight = 120;
+        maxParticleSize = 200;
+        particlesHeight = -40;
         particleScale = 100;
-        createParticles(0xA8A8A0);
+        totalParticles = 10;
+        createParticles(0xFF8000);
     }
     if (weather == 'Clear sky') {
         particleRotationSpeed = 0.01;
         maxParticleSize = 100;
         particlesHeight = 60;
         particleScale = 100;
+        totalParticles = 10;
         createParticles(0xFF8000);
     }
     if (weather == 'Few clouds') {
@@ -1093,6 +1108,7 @@ var changeWeather = function(weather){
         maxParticleSize = 100;
         particlesHeight = 60;
         particleScale = 100;
+        totalParticles = 10;
         createParticles(0xFF8000);
     }
     if (weather == 'Scattered clouds') {
@@ -1100,6 +1116,7 @@ var changeWeather = function(weather){
         maxParticleSize = 100;
         particlesHeight = 60;
         particleScale = 100;
+        totalParticles = 40;
         createParticles(0xFF8000);
     }
     if (weather == 'Broken clouds') {
@@ -1107,6 +1124,7 @@ var changeWeather = function(weather){
         maxParticleSize = 100;
         particlesHeight = 60;
         particleScale = 100;
+        totalParticles = 40;
         createParticles(0xFF8000);
     }
     if (weather == 'Shower rain') {
@@ -1114,6 +1132,7 @@ var changeWeather = function(weather){
         maxParticleSize = 100;
         particlesHeight = 60;
         particleScale = 100;
+        totalParticles = 200;
         createParticles(0xFF8000);
     }
     
